@@ -105,6 +105,54 @@ def _key_fn(baseline: str, seed: int):
     raise ValueError(f"unknown baseline {baseline!r}")
 
 
+def greedy_current_risk(inst: Instance, risk_model: RiskModel | None = None) -> Schedule:
+    """A stronger, HNDL-AWARE greedy: at each period migrate the eligible group
+    with the highest *current* per-period residual risk ``r_{i,t}`` (not static
+    total risk). This captures the optimizer's key insight — defer assets whose
+    HNDL risk has not yet activated, fix what is bleeding now — so it is the fair
+    sophisticated baseline. The optimal-vs-this gap isolates the value that
+    *remains* after a smart practitioner accounts for migration timing. Not one of
+    the five standard vendor baselines (`BASELINES`); evaluated separately.
+    """
+    rm = risk_model or RiskModel()
+    groups = _union_find_groups(inst, rm)
+    by_id = inst.by_id()
+    g_of = {m: g.gid for g in groups for m in g.members}
+    preds_by_asset = inst.predecessors()
+    pred_groups: dict[str, set[str]] = {}
+    for g in groups:
+        ext = set()
+        for m in g.members:
+            for j in preds_by_asset.get(m, []):
+                gj = g_of.get(j)
+                if gj is not None and gj != g.gid:
+                    ext.add(gj)
+        pred_groups[g.gid] = ext
+    by_gid = {g.gid: g for g in groups}
+    done_group: dict[str, int] = {}
+    schedule: Schedule = {}
+    pending = set(by_gid)
+    for t in range(inst.T):
+        b = inst.budget[t]
+
+        def cur_risk(g, _t=t):
+            return sum(rm.int_weight(by_id[m], _t, inst.t_crqc) for m in g.members)
+
+        while True:
+            elig = [by_gid[gid] for gid in pending
+                    if by_gid[gid].earliest <= t and by_gid[gid].cost <= b
+                    and all(pg in done_group and done_group[pg] <= t for pg in pred_groups[gid])]
+            if not elig:
+                break
+            g = max(elig, key=lambda gg: (cur_risk(gg), gg.total_risk, gg.gid))
+            done_group[g.gid] = t
+            for m in g.members:
+                schedule[m] = t
+            b -= g.cost
+            pending.discard(g.gid)
+    return schedule
+
+
 def greedy_schedule(
     inst: Instance,
     baseline: str = "highest_risk",
@@ -121,6 +169,8 @@ def greedy_schedule(
     complete within one period when budget allows, matching the MILP's
     capability), and the group cost fits the remaining budget.
     """
+    if baseline == "current_risk":
+        return greedy_current_risk(inst, risk_model)
     rm = risk_model or RiskModel()
     groups = _union_find_groups(inst, rm)
     keyfn = _key_fn(baseline, seed)

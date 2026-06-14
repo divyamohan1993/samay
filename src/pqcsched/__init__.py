@@ -17,7 +17,7 @@ from .risk import RiskModel
 from .score import ScheduleScore, score_schedule, objective_gap
 from .result import SolveResult, OPTIMAL, FEASIBLE, INFEASIBLE, UNKNOWN
 from .solve_cpsat import solve_cpsat
-from .greedy import greedy_schedule, BASELINES
+from .greedy import greedy_schedule, greedy_current_risk, BASELINES
 from .generate import generate, GenParams, tiny_instance
 
 __version__ = "0.1.0"
@@ -28,7 +28,7 @@ __all__ = [
     "ScheduleScore", "score_schedule", "objective_gap",
     "SolveResult", "OPTIMAL", "FEASIBLE", "INFEASIBLE", "UNKNOWN",
     "solve_cpsat",
-    "greedy_schedule", "BASELINES",
+    "greedy_schedule", "greedy_current_risk", "BASELINES",
     "generate", "GenParams", "tiny_instance",
     "__version__",
 ]
