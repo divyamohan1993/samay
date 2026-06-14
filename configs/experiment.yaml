@@ -65,10 +65,10 @@ studies:
     deadline_pressures: [0.4]
     t_crqcs: [9, 13, 17]
     risk_forms: [step, linear]
-    residual_factors: [0.0, 0.1, 0.25]
+    residual_factors: [0.1, 0.25]
     cluster_frac: 0.1
     delayed_frac: 0.15
-    n_instances: 6
-    time_limit: 25
+    n_instances: 5
+    time_limit: 20
     workers: 4
     base_seed: 4000

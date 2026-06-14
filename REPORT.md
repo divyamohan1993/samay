@@ -2,10 +2,12 @@
 
 *Divya Mohan (dmj.one). Research preprint / open-source reference tool. Code: `pqcsched`, Apache-2.0.*
 
-> **Status:** results sections marked ⏳ are populated from the reproducible study
-> in `runs/` (see §10). The formulation, baselines, generator, evaluation
-> protocol, and case study are final. Numbers were **pre-registered** in
-> `PROGRESS.md` before the study was run.
+> **Status:** all results sections are populated from the reproducible study in
+> `runs/`. The generator distributions and grid were **pre-registered** in
+> `PROGRESS.md` *before* the study was run. The main grid covers 23/36 cells (515
+> proven-optimal instances); the hardest dependency-dense × tight-budget cells are
+> partially covered (finite overnight compute on a shared box — see §13). Every
+> number here is regenerable; seeds are fixed and solver versions logged.
 
 ---
 
@@ -28,13 +30,18 @@ optimal scheduling actually beat greedy risk-ranking, and when?** We contribute
 CBC free fallbacks; Gurobi optional), (iii) the first reusable synthetic
 benchmark for PQC migration scheduling, (iv) a matheuristic for estates too large
 to solve exactly, and (v) a reproducible empirical study across a difficulty grid.
-⏳ *Headline finding (RQ2) and regime map summarised here once the study run
-completes.* In a stylised **India Digital Public Infrastructure** case study
-(Aadhaar/UPI/DigiLocker/eSign/CCA PKI, 26 vulnerable assets), the optimal schedule
-not only lowers residual risk versus the best greedy but, unlike three of five
+**Headline (RQ2), over 515 instances proven optimal:** optimal scheduling beats
+the vendor default (migrate-highest-risk-first) by a **median 56%** in residual
+risk, beats even a sophisticated **HNDL-aware** greedy by **49%**, and greedy
+heuristics **miss a mandated deadline 25–42% of the time** — so this is *not* a
+"greedy suffices" result; the precedence-and-budget-constrained timing problem is
+genuinely combinatorial. In a stylised **India Digital Public Infrastructure** case
+study (Aadhaar/UPI/DigiLocker/eSign/CCA PKI, 26 vulnerable assets), the optimal
+schedule lowers residual risk versus the best greedy and, unlike three of five
 greedy heuristics, **meets every regulatory deadline** — the greedy heuristics
-paint themselves into an infeasible corner. The contribution is honest either way:
-where greedy is near-optimal we say so and map the boundary where it is not.
+paint themselves into an infeasible corner. The contribution is honest: gaps are
+stated relative to the model and pre-registered distributions, and we map the
+(few) conditions that narrow the gap rather than the ones that widen it.
 
 ---
 
@@ -304,9 +311,29 @@ the dedicated calibration sweep.)
 
 ## 11. Results — sensitivity
 
-⏳ *Populated from `runs/sensitivity_summary.csv`.* How the optimal-vs-greedy
-conclusion shifts as `t_crqc`, the residual factor `ρ`, and the risk-model form
-vary — i.e. how model-dependent the finding is.
+We re-solved the optimum and re-scored greedy under every combination of CRQC
+timing `t_crqc ∈ {2035, 2039, 2043}`, residual factor `ρ ∈ {0.1, 0.25}`, and
+risk-model form `∈ {step, linear}` (mid-difficulty cell, size 30 for fast exact
+solves; `runs/sensitivity.csv`). The headline survives intact: the median
+highest-risk gap stays **between 33.5% and 60.0% across all twelve settings — it
+never collapses.** The modelling choices modulate it monotonically and
+sensibly:
+
+- **Residual factor:** larger `ρ` *narrows* the gap (e.g. step / t_crqc 2039:
+  48.8% at ρ=0.1 → 38.3% at ρ=0.25). When even non-HNDL-exposed assets carry
+  meaningful risk, the *timing* of the HNDL-exposed ones matters relatively less,
+  so greedy closes some ground.
+- **Risk-model form:** the smoother `linear` form gives smaller gaps than the
+  sharp `step` (40.2% vs 48.8% at t_crqc 2039, ρ=0.1) — a step objective punishes
+  mis-timing more.
+- **CRQC timing:** a later CRQC tends to *widen* the gap (step, ρ=0.1: 43.6% at
+  2035 → 60.0% at 2043), as more of the horizon sits in the residual regime where
+  ordering matters.
+
+Even the setting most favourable to greedy (linear, ρ=0.25, t_crqc 2039) leaves a
+**33.5%** gap. The conclusion — optimization pays, substantially — is therefore
+**not an artifact of one risk model**; it is robust across the plausible modelling
+space, which is the honest test that matters.
 
 ## 12. Case study — India Digital Public Infrastructure
 

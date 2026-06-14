@@ -1,0 +1,77 @@
+{
+  "description": "SAMAY synthetic benchmark set (Apache-2.0). Regenerable via pqcsched.generate; seeds fixed.",
+  "instances": [
+    {
+      "name": "easy_small",
+      "size": 20,
+      "T": 20,
+      "dep_density": 0.1,
+      "budget_tightness": 0.4,
+      "deadline_pressure": 0.1,
+      "n_assets": 20,
+      "n_deps": 8,
+      "n_mandated": 4,
+      "realized_tightness": 0.3917
+    },
+    {
+      "name": "mid_balanced",
+      "size": 40,
+      "T": 20,
+      "dep_density": 0.3,
+      "budget_tightness": 0.6,
+      "deadline_pressure": 0.4,
+      "n_assets": 40,
+      "n_deps": 41,
+      "n_mandated": 17,
+      "realized_tightness": 0.58
+    },
+    {
+      "name": "tight_budget",
+      "size": 45,
+      "T": 20,
+      "dep_density": 0.3,
+      "budget_tightness": 0.9,
+      "deadline_pressure": 0.4,
+      "n_assets": 45,
+      "n_deps": 43,
+      "n_mandated": 18,
+      "realized_tightness": 0.8591
+    },
+    {
+      "name": "dense_deps",
+      "size": 45,
+      "T": 20,
+      "dep_density": 0.7,
+      "budget_tightness": 0.6,
+      "deadline_pressure": 0.4,
+      "n_assets": 45,
+      "n_deps": 115,
+      "n_mandated": 19,
+      "realized_tightness": 0.5906
+    },
+    {
+      "name": "deadline_heavy",
+      "size": 45,
+      "T": 20,
+      "dep_density": 0.3,
+      "budget_tightness": 0.6,
+      "deadline_pressure": 0.8,
+      "n_assets": 45,
+      "n_deps": 43,
+      "n_mandated": 31,
+      "realized_tightness": 0.5906
+    },
+    {
+      "name": "scale_120",
+      "size": 120,
+      "T": 24,
+      "dep_density": 0.3,
+      "budget_tightness": 0.6,
+      "deadline_pressure": 0.4,
+      "n_assets": 120,
+      "n_deps": 145,
+      "n_mandated": 53,
+      "realized_tightness": 0.5943
+    }
+  ]
+}

@@ -1,7 +1,64 @@
 # PROGRESS — SAMAY / pqcsched
 
+## ★ FINAL SUMMARY (2026-06-15)
+
+**The headline (RQ2), honest and robust.** Across **515 instances proven
+OPTIMAL** (23/36 grid cells), optimal scheduling beats greedy *in every regime
+tested* — this is **not** a "greedy suffices" result:
+
+| baseline | median gap vs optimal | greedy feasible rate |
+|---|---:|---:|
+| highest-risk-first (vendor default) | **+56%** | 68% |
+| risk-per-cost | +52% | 68% |
+| earliest-deadline-first | +119% | 75% |
+| shortest-processing-time | +128% | 58% |
+| random | +142% | 67% |
+| **HNDL-aware greedy** (stronger baseline we added) | **+49%** | 69% |
+
+- The gap is **combinatorial, not a naive sort**: even a sophisticated greedy that
+  prioritizes *current* per-period HNDL risk is still ~49% worse than optimal.
+- **Greedy frequently infeasible**: feasibility collapses from 97% (low deadline
+  pressure) to **25%** (high pressure) — three-quarters of greedy roadmaps miss a
+  regulatory mandate.
+- **Counter-intuitive regime**: the gap is *largest at loose budgets* (74% at
+  tightness 0.4 vs 49% at 0.95) — ample capacity gives greedy more freedom to
+  mis-time. Regime heatmaps in `artifacts/`.
+
+**Scalability (RQ3).** CP-SAT proves optimality reliably to **~60 assets** (≤14 s),
+cliff at **~80**. Beyond it, **LNS matches the optimum where known (≈0% gap)** and
+stays within a few percent of the exact incumbent while **beating greedy 6–7×**
+(size 80: LNS 4500 vs greedy 27797). LNS > rolling-horizon in robustness (the
+latter can fail to stitch a feasible schedule on hard instances — reported, not
+hidden).
+
+**Case study (India-DPI).** 26-asset Aadhaar/UPI/DigiLocker/eSign/CCA-PKI estate
+(public architecture). Optimal proves in <1 s, meets **all 18 mandates**; **3 of 5
+greedies miss a mandate** (infeasible). Risk–cost Pareto + roadmap in `artifacts/`.
+
+**Reproduce.** `pip install -e .` (Python 3.12, CPU-only) or `scripts/00_setup.sh`
+on a blank Ubuntu box. Study: `python scripts/run_main_study.py --grid
+configs/experiment.yaml` (checkpointed/resumable). Strong-baseline re-analysis:
+`scripts/reanalyze_strong_baseline.py`. Case study: `scripts/case_study.py`. All
+seeds fixed; `requirements.lock.txt` pins versions; distributions pre-registered
+below before the run.
+
+**Honest limitations.** Optimality is *relative to* the HNDL-aware time-integrated
+objective and the pre-registered synthetic distributions (no public census of real
+estates exists). Garbage CBOM in → garbage schedule out. The 13 hardest
+dependency-dense × tight-budget cells are only partially covered (the box was
+shared with an unrelated `praman` workload, so SAMAY ran niced/capped to avoid
+disrupting it; a dedicated box at 12 workers completes them). Annual periods trade
+intra-year granularity for tractability. See `REPORT.md` §13.
+
+**§13 Definition-of-Done:** all boxes met except a *partial* coverage of the
+hardest cells and a focused (not exhaustive) sensitivity sweep — both consequences
+of finite overnight compute on a shared box, documented honestly. Deployment to
+Cloud Run deferred per owner instruction (container prepared, never auto-deployed).
+
+---
+
 Append-only decision log + cross-session memory. Newest entries at the bottom of
-each phase. Headline final summary goes at the very top when §13 is complete.
+each phase.
 
 > **Blockers (top-of-file, cleared when resolved):** none.
 

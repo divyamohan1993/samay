@@ -1,0 +1,1744 @@
+{
+  "assets": [
+    {
+      "id": "a0",
+      "criticality": 26,
+      "shelf_life": 3,
+      "cost": 2,
+      "perf_penalty": 0.2001826549969429,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a1",
+      "criticality": 9,
+      "shelf_life": 10,
+      "cost": 4,
+      "perf_penalty": 0.5390199284169215,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a2",
+      "criticality": 37,
+      "shelf_life": 10,
+      "cost": 5,
+      "perf_penalty": 0.45751928824239135,
+      "earliest": 5,
+      "deadline": null
+    },
+    {
+      "id": "a3",
+      "criticality": 43,
+      "shelf_life": 25,
+      "cost": 8,
+      "perf_penalty": 0.16232096454610542,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a4",
+      "criticality": 4,
+      "shelf_life": 10,
+      "cost": 6,
+      "perf_penalty": 0.2185152106632324,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a5",
+      "criticality": 7,
+      "shelf_life": 3,
+      "cost": 5,
+      "perf_penalty": 0.18866398812255772,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a6",
+      "criticality": 22,
+      "shelf_life": 3,
+      "cost": 8,
+      "perf_penalty": 0.0945669891749998,
+      "earliest": 0,
+      "deadline": 17
+    },
+    {
+      "id": "a7",
+      "criticality": 16,
+      "shelf_life": 10,
+      "cost": 2,
+      "perf_penalty": 0.08867002352531499,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a8",
+      "criticality": 20,
+      "shelf_life": 25,
+      "cost": 3,
+      "perf_penalty": 0.5616764780254464,
+      "earliest": 0,
+      "deadline": 17
+    },
+    {
+      "id": "a9",
+      "criticality": 10,
+      "shelf_life": 3,
+      "cost": 3,
+      "perf_penalty": 0.26274242231925193,
+      "earliest": 2,
+      "deadline": 20
+    },
+    {
+      "id": "a10",
+      "criticality": 41,
+      "shelf_life": 3,
+      "cost": 3,
+      "perf_penalty": 0.2299918936664459,
+      "earliest": 1,
+      "deadline": 22
+    },
+    {
+      "id": "a11",
+      "criticality": 37,
+      "shelf_life": 10,
+      "cost": 2,
+      "perf_penalty": 0.43781142520642674,
+      "earliest": 1,
+      "deadline": 16
+    },
+    {
+      "id": "a12",
+      "criticality": 21,
+      "shelf_life": 3,
+      "cost": 6,
+      "perf_penalty": 0.33179583915173994,
+      "earliest": 1,
+      "deadline": 23
+    },
+    {
+      "id": "a13",
+      "criticality": 49,
+      "shelf_life": 25,
+      "cost": 4,
+      "perf_penalty": 0.5616839921030773,
+      "earliest": 1,
+      "deadline": 20
+    },
+    {
+      "id": "a14",
+      "criticality": 29,
+      "shelf_life": 3,
+      "cost": 2,
+      "perf_penalty": 0.4681808963456353,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a15",
+      "criticality": 10,
+      "shelf_life": 3,
+      "cost": 2,
+      "perf_penalty": 0.2876217384747242,
+      "earliest": 2,
+      "deadline": null
+    },
+    {
+      "id": "a16",
+      "criticality": 27,
+      "shelf_life": 25,
+      "cost": 5,
+      "perf_penalty": 0.22581568408849573,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a17",
+      "criticality": 9,
+      "shelf_life": 3,
+      "cost": 6,
+      "perf_penalty": 0.5919789269545932,
+      "earliest": 5,
+      "deadline": 19
+    },
+    {
+      "id": "a18",
+      "criticality": 41,
+      "shelf_life": 3,
+      "cost": 11,
+      "perf_penalty": 0.43065614160218607,
+      "earliest": 5,
+      "deadline": 19
+    },
+    {
+      "id": "a19",
+      "criticality": 19,
+      "shelf_life": 3,
+      "cost": 14,
+      "perf_penalty": 0.5707167960023046,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a20",
+      "criticality": 17,
+      "shelf_life": 3,
+      "cost": 5,
+      "perf_penalty": 0.07108714633022481,
+      "earliest": 1,
+      "deadline": 19
+    },
+    {
+      "id": "a21",
+      "criticality": 12,
+      "shelf_life": 3,
+      "cost": 2,
+      "perf_penalty": 0.5103202075144695,
+      "earliest": 2,
+      "deadline": null
+    },
+    {
+      "id": "a22",
+      "criticality": 53,
+      "shelf_life": 3,
+      "cost": 1,
+      "perf_penalty": 0.38224433039472455,
+      "earliest": 1,
+      "deadline": 17
+    },
+    {
+      "id": "a23",
+      "criticality": 18,
+      "shelf_life": 3,
+      "cost": 5,
+      "perf_penalty": 0.07315300700106754,
+      "earliest": 2,
+      "deadline": null
+    },
+    {
+      "id": "a24",
+      "criticality": 14,
+      "shelf_life": 3,
+      "cost": 3,
+      "perf_penalty": 0.3529547999815324,
+      "earliest": 1,
+      "deadline": 17
+    },
+    {
+      "id": "a25",
+      "criticality": 15,
+      "shelf_life": 10,
+      "cost": 3,
+      "perf_penalty": 0.41165781906326926,
+      "earliest": 0,
+      "deadline": 16
+    },
+    {
+      "id": "a26",
+      "criticality": 31,
+      "shelf_life": 10,
+      "cost": 3,
+      "perf_penalty": 0.007381611533161702,
+      "earliest": 1,
+      "deadline": 19
+    },
+    {
+      "id": "a27",
+      "criticality": 27,
+      "shelf_life": 3,
+      "cost": 4,
+      "perf_penalty": 0.2725907771050479,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a28",
+      "criticality": 28,
+      "shelf_life": 3,
+      "cost": 7,
+      "perf_penalty": 0.49523970671779266,
+      "earliest": 5,
+      "deadline": null
+    },
+    {
+      "id": "a29",
+      "criticality": 28,
+      "shelf_life": 10,
+      "cost": 4,
+      "perf_penalty": 0.17721541520645392,
+      "earliest": 1,
+      "deadline": 17
+    },
+    {
+      "id": "a30",
+      "criticality": 100,
+      "shelf_life": 25,
+      "cost": 4,
+      "perf_penalty": 0.27512884907913066,
+      "earliest": 1,
+      "deadline": 16
+    },
+    {
+      "id": "a31",
+      "criticality": 15,
+      "shelf_life": 25,
+      "cost": 2,
+      "perf_penalty": 0.2653884762407359,
+      "earliest": 5,
+      "deadline": null
+    },
+    {
+      "id": "a32",
+      "criticality": 13,
+      "shelf_life": 3,
+      "cost": 2,
+      "perf_penalty": 0.18115643486549496,
+      "earliest": 5,
+      "deadline": null
+    },
+    {
+      "id": "a33",
+      "criticality": 10,
+      "shelf_life": 3,
+      "cost": 3,
+      "perf_penalty": 0.5510651373093325,
+      "earliest": 1,
+      "deadline": 20
+    },
+    {
+      "id": "a34",
+      "criticality": 33,
+      "shelf_life": 3,
+      "cost": 4,
+      "perf_penalty": 0.4687764212589095,
+      "earliest": 0,
+      "deadline": 16
+    },
+    {
+      "id": "a35",
+      "criticality": 50,
+      "shelf_life": 3,
+      "cost": 10,
+      "perf_penalty": 0.06635304659766629,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a36",
+      "criticality": 18,
+      "shelf_life": 10,
+      "cost": 4,
+      "perf_penalty": 0.5982207947025439,
+      "earliest": 5,
+      "deadline": null
+    },
+    {
+      "id": "a37",
+      "criticality": 10,
+      "shelf_life": 10,
+      "cost": 7,
+      "perf_penalty": 0.5275200145846471,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a38",
+      "criticality": 10,
+      "shelf_life": 3,
+      "cost": 3,
+      "perf_penalty": 0.17034506271842337,
+      "earliest": 1,
+      "deadline": 18
+    },
+    {
+      "id": "a39",
+      "criticality": 34,
+      "shelf_life": 3,
+      "cost": 2,
+      "perf_penalty": 0.502137947796563,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a40",
+      "criticality": 36,
+      "shelf_life": 10,
+      "cost": 3,
+      "perf_penalty": 0.06385171912282972,
+      "earliest": 1,
+      "deadline": 19
+    },
+    {
+      "id": "a41",
+      "criticality": 31,
+      "shelf_life": 3,
+      "cost": 3,
+      "perf_penalty": 0.5994628382845432,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a42",
+      "criticality": 12,
+      "shelf_life": 25,
+      "cost": 12,
+      "perf_penalty": 0.3994108416639221,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a43",
+      "criticality": 24,
+      "shelf_life": 3,
+      "cost": 3,
+      "perf_penalty": 0.39007500933527817,
+      "earliest": 5,
+      "deadline": 18
+    },
+    {
+      "id": "a44",
+      "criticality": 22,
+      "shelf_life": 25,
+      "cost": 6,
+      "perf_penalty": 0.054264436190479645,
+      "earliest": 2,
+      "deadline": 18
+    },
+    {
+      "id": "a45",
+      "criticality": 24,
+      "shelf_life": 3,
+      "cost": 3,
+      "perf_penalty": 0.5382200393379751,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a46",
+      "criticality": 40,
+      "shelf_life": 25,
+      "cost": 6,
+      "perf_penalty": 0.017399701922681653,
+      "earliest": 5,
+      "deadline": null
+    },
+    {
+      "id": "a47",
+      "criticality": 24,
+      "shelf_life": 25,
+      "cost": 5,
+      "perf_penalty": 0.14449683482468823,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a48",
+      "criticality": 35,
+      "shelf_life": 25,
+      "cost": 4,
+      "perf_penalty": 0.085813125099981,
+      "earliest": 1,
+      "deadline": 17
+    },
+    {
+      "id": "a49",
+      "criticality": 21,
+      "shelf_life": 25,
+      "cost": 4,
+      "perf_penalty": 0.4660607644153311,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a50",
+      "criticality": 25,
+      "shelf_life": 10,
+      "cost": 3,
+      "perf_penalty": 0.11892253632773872,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a51",
+      "criticality": 33,
+      "shelf_life": 10,
+      "cost": 5,
+      "perf_penalty": 0.5463829362785312,
+      "earliest": 5,
+      "deadline": 19
+    },
+    {
+      "id": "a52",
+      "criticality": 6,
+      "shelf_life": 10,
+      "cost": 3,
+      "perf_penalty": 0.3937614235964941,
+      "earliest": 0,
+      "deadline": 18
+    },
+    {
+      "id": "a53",
+      "criticality": 16,
+      "shelf_life": 3,
+      "cost": 2,
+      "perf_penalty": 0.021697626296817728,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a54",
+      "criticality": 14,
+      "shelf_life": 10,
+      "cost": 2,
+      "perf_penalty": 0.003257900477220277,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a55",
+      "criticality": 12,
+      "shelf_life": 10,
+      "cost": 4,
+      "perf_penalty": 0.030994750208639354,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a56",
+      "criticality": 16,
+      "shelf_life": 25,
+      "cost": 9,
+      "perf_penalty": 0.3635551065886366,
+      "earliest": 1,
+      "deadline": 23
+    },
+    {
+      "id": "a57",
+      "criticality": 66,
+      "shelf_life": 10,
+      "cost": 4,
+      "perf_penalty": 0.48088908651564916,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a58",
+      "criticality": 10,
+      "shelf_life": 3,
+      "cost": 4,
+      "perf_penalty": 0.14313169237643308,
+      "earliest": 1,
+      "deadline": 22
+    },
+    {
+      "id": "a59",
+      "criticality": 44,
+      "shelf_life": 10,
+      "cost": 5,
+      "perf_penalty": 0.5096453057538437,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a60",
+      "criticality": 5,
+      "shelf_life": 3,
+      "cost": 8,
+      "perf_penalty": 0.03433916409195623,
+      "earliest": 0,
+      "deadline": 17
+    },
+    {
+      "id": "a61",
+      "criticality": 15,
+      "shelf_life": 3,
+      "cost": 5,
+      "perf_penalty": 0.4805783121850057,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a62",
+      "criticality": 23,
+      "shelf_life": 10,
+      "cost": 3,
+      "perf_penalty": 0.5566772581033682,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a63",
+      "criticality": 32,
+      "shelf_life": 10,
+      "cost": 7,
+      "perf_penalty": 0.4632650394626283,
+      "earliest": 3,
+      "deadline": null
+    },
+    {
+      "id": "a64",
+      "criticality": 35,
+      "shelf_life": 3,
+      "cost": 5,
+      "perf_penalty": 0.4188724703871823,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a65",
+      "criticality": 38,
+      "shelf_life": 3,
+      "cost": 9,
+      "perf_penalty": 0.5027881311932298,
+      "earliest": 1,
+      "deadline": 18
+    },
+    {
+      "id": "a66",
+      "criticality": 15,
+      "shelf_life": 3,
+      "cost": 4,
+      "perf_penalty": 0.024090779728239854,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a67",
+      "criticality": 14,
+      "shelf_life": 3,
+      "cost": 2,
+      "perf_penalty": 0.12106926643143323,
+      "earliest": 1,
+      "deadline": 16
+    },
+    {
+      "id": "a68",
+      "criticality": 40,
+      "shelf_life": 3,
+      "cost": 2,
+      "perf_penalty": 0.07495420758338585,
+      "earliest": 1,
+      "deadline": 17
+    },
+    {
+      "id": "a69",
+      "criticality": 17,
+      "shelf_life": 10,
+      "cost": 9,
+      "perf_penalty": 0.3027185941157919,
+      "earliest": 2,
+      "deadline": null
+    },
+    {
+      "id": "a70",
+      "criticality": 7,
+      "shelf_life": 3,
+      "cost": 10,
+      "perf_penalty": 0.4471128769973067,
+      "earliest": 0,
+      "deadline": 22
+    },
+    {
+      "id": "a71",
+      "criticality": 8,
+      "shelf_life": 25,
+      "cost": 4,
+      "perf_penalty": 0.3780071067458392,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a72",
+      "criticality": 10,
+      "shelf_life": 25,
+      "cost": 3,
+      "perf_penalty": 0.510678659857161,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a73",
+      "criticality": 30,
+      "shelf_life": 10,
+      "cost": 8,
+      "perf_penalty": 0.09312779546465452,
+      "earliest": 3,
+      "deadline": null
+    },
+    {
+      "id": "a74",
+      "criticality": 23,
+      "shelf_life": 3,
+      "cost": 2,
+      "perf_penalty": 0.4407726551610969,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a75",
+      "criticality": 35,
+      "shelf_life": 10,
+      "cost": 3,
+      "perf_penalty": 0.11582489452134245,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a76",
+      "criticality": 14,
+      "shelf_life": 25,
+      "cost": 6,
+      "perf_penalty": 0.16245525079068016,
+      "earliest": 0,
+      "deadline": 23
+    },
+    {
+      "id": "a77",
+      "criticality": 23,
+      "shelf_life": 10,
+      "cost": 3,
+      "perf_penalty": 0.42594281836878234,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a78",
+      "criticality": 33,
+      "shelf_life": 25,
+      "cost": 4,
+      "perf_penalty": 0.588122870939209,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a79",
+      "criticality": 16,
+      "shelf_life": 10,
+      "cost": 4,
+      "perf_penalty": 0.36692616358624175,
+      "earliest": 1,
+      "deadline": 18
+    },
+    {
+      "id": "a80",
+      "criticality": 29,
+      "shelf_life": 10,
+      "cost": 5,
+      "perf_penalty": 0.032700188994777356,
+      "earliest": 1,
+      "deadline": 18
+    },
+    {
+      "id": "a81",
+      "criticality": 12,
+      "shelf_life": 3,
+      "cost": 8,
+      "perf_penalty": 0.36978538195651967,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a82",
+      "criticality": 15,
+      "shelf_life": 10,
+      "cost": 4,
+      "perf_penalty": 0.025410330948100256,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a83",
+      "criticality": 15,
+      "shelf_life": 3,
+      "cost": 6,
+      "perf_penalty": 0.5304874268200903,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a84",
+      "criticality": 8,
+      "shelf_life": 10,
+      "cost": 1,
+      "perf_penalty": 0.4257469710603724,
+      "earliest": 5,
+      "deadline": null
+    },
+    {
+      "id": "a85",
+      "criticality": 30,
+      "shelf_life": 25,
+      "cost": 4,
+      "perf_penalty": 0.10387670785350193,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a86",
+      "criticality": 14,
+      "shelf_life": 3,
+      "cost": 3,
+      "perf_penalty": 0.055032603494518835,
+      "earliest": 1,
+      "deadline": 20
+    },
+    {
+      "id": "a87",
+      "criticality": 20,
+      "shelf_life": 10,
+      "cost": 2,
+      "perf_penalty": 0.11011993732819138,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a88",
+      "criticality": 30,
+      "shelf_life": 3,
+      "cost": 3,
+      "perf_penalty": 0.5880163077325155,
+      "earliest": 5,
+      "deadline": null
+    },
+    {
+      "id": "a89",
+      "criticality": 29,
+      "shelf_life": 10,
+      "cost": 3,
+      "perf_penalty": 0.2751363854750939,
+      "earliest": 5,
+      "deadline": 17
+    },
+    {
+      "id": "a90",
+      "criticality": 34,
+      "shelf_life": 3,
+      "cost": 6,
+      "perf_penalty": 0.4704485690048448,
+      "earliest": 1,
+      "deadline": 16
+    },
+    {
+      "id": "a91",
+      "criticality": 19,
+      "shelf_life": 25,
+      "cost": 2,
+      "perf_penalty": 0.3818450052646661,
+      "earliest": 5,
+      "deadline": 18
+    },
+    {
+      "id": "a92",
+      "criticality": 14,
+      "shelf_life": 3,
+      "cost": 4,
+      "perf_penalty": 0.3434478899751824,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a93",
+      "criticality": 19,
+      "shelf_life": 25,
+      "cost": 3,
+      "perf_penalty": 0.08707815279902982,
+      "earliest": 1,
+      "deadline": 19
+    },
+    {
+      "id": "a94",
+      "criticality": 5,
+      "shelf_life": 25,
+      "cost": 3,
+      "perf_penalty": 0.5676146721348571,
+      "earliest": 1,
+      "deadline": 19
+    },
+    {
+      "id": "a95",
+      "criticality": 6,
+      "shelf_life": 10,
+      "cost": 7,
+      "perf_penalty": 0.18080557950883075,
+      "earliest": 0,
+      "deadline": 23
+    },
+    {
+      "id": "a96",
+      "criticality": 7,
+      "shelf_life": 10,
+      "cost": 5,
+      "perf_penalty": 0.3468103294845253,
+      "earliest": 1,
+      "deadline": 16
+    },
+    {
+      "id": "a97",
+      "criticality": 9,
+      "shelf_life": 10,
+      "cost": 8,
+      "perf_penalty": 0.41986556675343967,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a98",
+      "criticality": 28,
+      "shelf_life": 25,
+      "cost": 4,
+      "perf_penalty": 0.38953989314718535,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a99",
+      "criticality": 10,
+      "shelf_life": 3,
+      "cost": 3,
+      "perf_penalty": 0.564356645817311,
+      "earliest": 5,
+      "deadline": null
+    },
+    {
+      "id": "a100",
+      "criticality": 15,
+      "shelf_life": 10,
+      "cost": 4,
+      "perf_penalty": 0.08906339395203479,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a101",
+      "criticality": 57,
+      "shelf_life": 3,
+      "cost": 5,
+      "perf_penalty": 0.30501164306816525,
+      "earliest": 1,
+      "deadline": 23
+    },
+    {
+      "id": "a102",
+      "criticality": 15,
+      "shelf_life": 10,
+      "cost": 4,
+      "perf_penalty": 0.24242063444445958,
+      "earliest": 1,
+      "deadline": 20
+    },
+    {
+      "id": "a103",
+      "criticality": 36,
+      "shelf_life": 3,
+      "cost": 2,
+      "perf_penalty": 0.28450123768957086,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a104",
+      "criticality": 10,
+      "shelf_life": 10,
+      "cost": 4,
+      "perf_penalty": 0.07153051571864677,
+      "earliest": 5,
+      "deadline": null
+    },
+    {
+      "id": "a105",
+      "criticality": 17,
+      "shelf_life": 10,
+      "cost": 5,
+      "perf_penalty": 0.0804567659236592,
+      "earliest": 4,
+      "deadline": null
+    },
+    {
+      "id": "a106",
+      "criticality": 9,
+      "shelf_life": 10,
+      "cost": 14,
+      "perf_penalty": 0.1668453274687544,
+      "earliest": 1,
+      "deadline": 17
+    },
+    {
+      "id": "a107",
+      "criticality": 15,
+      "shelf_life": 10,
+      "cost": 10,
+      "perf_penalty": 0.18282276225649877,
+      "earliest": 0,
+      "deadline": 16
+    },
+    {
+      "id": "a108",
+      "criticality": 39,
+      "shelf_life": 10,
+      "cost": 3,
+      "perf_penalty": 0.25674192820881,
+      "earliest": 5,
+      "deadline": 16
+    },
+    {
+      "id": "a109",
+      "criticality": 5,
+      "shelf_life": 10,
+      "cost": 4,
+      "perf_penalty": 0.36659252822197697,
+      "earliest": 0,
+      "deadline": 23
+    },
+    {
+      "id": "a110",
+      "criticality": 28,
+      "shelf_life": 10,
+      "cost": 2,
+      "perf_penalty": 0.3807774704509578,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a111",
+      "criticality": 24,
+      "shelf_life": 10,
+      "cost": 3,
+      "perf_penalty": 0.24708653795134214,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a112",
+      "criticality": 12,
+      "shelf_life": 25,
+      "cost": 5,
+      "perf_penalty": 0.24526986565721826,
+      "earliest": 1,
+      "deadline": 16
+    },
+    {
+      "id": "a113",
+      "criticality": 6,
+      "shelf_life": 3,
+      "cost": 7,
+      "perf_penalty": 0.13057711601817718,
+      "earliest": 2,
+      "deadline": 23
+    },
+    {
+      "id": "a114",
+      "criticality": 21,
+      "shelf_life": 3,
+      "cost": 3,
+      "perf_penalty": 0.3529837490454049,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a115",
+      "criticality": 13,
+      "shelf_life": 3,
+      "cost": 3,
+      "perf_penalty": 0.19022454679034273,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a116",
+      "criticality": 24,
+      "shelf_life": 10,
+      "cost": 1,
+      "perf_penalty": 0.02163590056641822,
+      "earliest": 1,
+      "deadline": 19
+    },
+    {
+      "id": "a117",
+      "criticality": 20,
+      "shelf_life": 10,
+      "cost": 4,
+      "perf_penalty": 0.2510400264941162,
+      "earliest": 1,
+      "deadline": null
+    },
+    {
+      "id": "a118",
+      "criticality": 72,
+      "shelf_life": 10,
+      "cost": 2,
+      "perf_penalty": 0.2844796050541022,
+      "earliest": 0,
+      "deadline": null
+    },
+    {
+      "id": "a119",
+      "criticality": 17,
+      "shelf_life": 10,
+      "cost": 3,
+      "perf_penalty": 0.1353557209225266,
+      "earliest": 0,
+      "deadline": 18
+    }
+  ],
+  "T": 24,
+  "budget": [
+    38,
+    38,
+    38,
+    38,
+    38,
+    38,
+    38,
+    38,
+    38,
+    38,
+    38,
+    38,
+    38,
+    38,
+    38,
+    38,
+    38,
+    38,
+    38,
+    38,
+    38,
+    38,
+    38,
+    38
+  ],
+  "deps": [
+    [
+      "a95",
+      "a65"
+    ],
+    [
+      "a65",
+      "a74"
+    ],
+    [
+      "a65",
+      "a14"
+    ],
+    [
+      "a95",
+      "a14"
+    ],
+    [
+      "a74",
+      "a14"
+    ],
+    [
+      "a14",
+      "a111"
+    ],
+    [
+      "a45",
+      "a111"
+    ],
+    [
+      "a111",
+      "a67"
+    ],
+    [
+      "a45",
+      "a37"
+    ],
+    [
+      "a67",
+      "a37"
+    ],
+    [
+      "a74",
+      "a37"
+    ],
+    [
+      "a67",
+      "a19"
+    ],
+    [
+      "a111",
+      "a19"
+    ],
+    [
+      "a25",
+      "a117"
+    ],
+    [
+      "a74",
+      "a117"
+    ],
+    [
+      "a111",
+      "a102"
+    ],
+    [
+      "a19",
+      "a102"
+    ],
+    [
+      "a74",
+      "a102"
+    ],
+    [
+      "a19",
+      "a50"
+    ],
+    [
+      "a14",
+      "a50"
+    ],
+    [
+      "a37",
+      "a101"
+    ],
+    [
+      "a67",
+      "a79"
+    ],
+    [
+      "a102",
+      "a79"
+    ],
+    [
+      "a25",
+      "a79"
+    ],
+    [
+      "a79",
+      "a3"
+    ],
+    [
+      "a45",
+      "a112"
+    ],
+    [
+      "a50",
+      "a112"
+    ],
+    [
+      "a45",
+      "a80"
+    ],
+    [
+      "a3",
+      "a80"
+    ],
+    [
+      "a37",
+      "a88"
+    ],
+    [
+      "a101",
+      "a88"
+    ],
+    [
+      "a111",
+      "a48"
+    ],
+    [
+      "a88",
+      "a42"
+    ],
+    [
+      "a102",
+      "a33"
+    ],
+    [
+      "a45",
+      "a33"
+    ],
+    [
+      "a25",
+      "a91"
+    ],
+    [
+      "a79",
+      "a91"
+    ],
+    [
+      "a101",
+      "a59"
+    ],
+    [
+      "a70",
+      "a59"
+    ],
+    [
+      "a42",
+      "a58"
+    ],
+    [
+      "a50",
+      "a116"
+    ],
+    [
+      "a102",
+      "a53"
+    ],
+    [
+      "a91",
+      "a89"
+    ],
+    [
+      "a67",
+      "a89"
+    ],
+    [
+      "a65",
+      "a64"
+    ],
+    [
+      "a101",
+      "a27"
+    ],
+    [
+      "a62",
+      "a27"
+    ],
+    [
+      "a27",
+      "a61"
+    ],
+    [
+      "a80",
+      "a90"
+    ],
+    [
+      "a111",
+      "a94"
+    ],
+    [
+      "a62",
+      "a38"
+    ],
+    [
+      "a48",
+      "a38"
+    ],
+    [
+      "a33",
+      "a38"
+    ],
+    [
+      "a58",
+      "a38"
+    ],
+    [
+      "a61",
+      "a23"
+    ],
+    [
+      "a74",
+      "a83"
+    ],
+    [
+      "a65",
+      "a51"
+    ],
+    [
+      "a23",
+      "a15"
+    ],
+    [
+      "a79",
+      "a12"
+    ],
+    [
+      "a17",
+      "a97"
+    ],
+    [
+      "a87",
+      "a97"
+    ],
+    [
+      "a27",
+      "a97"
+    ],
+    [
+      "a112",
+      "a56"
+    ],
+    [
+      "a50",
+      "a56"
+    ],
+    [
+      "a17",
+      "a7"
+    ],
+    [
+      "a15",
+      "a21"
+    ],
+    [
+      "a25",
+      "a68"
+    ],
+    [
+      "a116",
+      "a68"
+    ],
+    [
+      "a64",
+      "a96"
+    ],
+    [
+      "a79",
+      "a24"
+    ],
+    [
+      "a45",
+      "a76"
+    ],
+    [
+      "a114",
+      "a76"
+    ],
+    [
+      "a101",
+      "a1"
+    ],
+    [
+      "a90",
+      "a2"
+    ],
+    [
+      "a51",
+      "a2"
+    ],
+    [
+      "a76",
+      "a34"
+    ],
+    [
+      "a2",
+      "a84"
+    ],
+    [
+      "a79",
+      "a84"
+    ],
+    [
+      "a97",
+      "a10"
+    ],
+    [
+      "a79",
+      "a10"
+    ],
+    [
+      "a117",
+      "a85"
+    ],
+    [
+      "a80",
+      "a22"
+    ],
+    [
+      "a10",
+      "a22"
+    ],
+    [
+      "a89",
+      "a18"
+    ],
+    [
+      "a67",
+      "a115"
+    ],
+    [
+      "a80",
+      "a115"
+    ],
+    [
+      "a97",
+      "a115"
+    ],
+    [
+      "a3",
+      "a20"
+    ],
+    [
+      "a36",
+      "a104"
+    ],
+    [
+      "a48",
+      "a86"
+    ],
+    [
+      "a89",
+      "a32"
+    ],
+    [
+      "a79",
+      "a32"
+    ],
+    [
+      "a48",
+      "a69"
+    ],
+    [
+      "a117",
+      "a11"
+    ],
+    [
+      "a102",
+      "a63"
+    ],
+    [
+      "a45",
+      "a63"
+    ],
+    [
+      "a8",
+      "a108"
+    ],
+    [
+      "a23",
+      "a113"
+    ],
+    [
+      "a51",
+      "a46"
+    ],
+    [
+      "a17",
+      "a103"
+    ],
+    [
+      "a22",
+      "a103"
+    ],
+    [
+      "a7",
+      "a98"
+    ],
+    [
+      "a88",
+      "a35"
+    ],
+    [
+      "a59",
+      "a57"
+    ],
+    [
+      "a80",
+      "a57"
+    ],
+    [
+      "a14",
+      "a72"
+    ],
+    [
+      "a62",
+      "a72"
+    ],
+    [
+      "a83",
+      "a72"
+    ],
+    [
+      "a3",
+      "a106"
+    ],
+    [
+      "a50",
+      "a106"
+    ],
+    [
+      "a37",
+      "a26"
+    ],
+    [
+      "a14",
+      "a26"
+    ],
+    [
+      "a45",
+      "a26"
+    ],
+    [
+      "a17",
+      "a109"
+    ],
+    [
+      "a48",
+      "a13"
+    ],
+    [
+      "a18",
+      "a28"
+    ],
+    [
+      "a113",
+      "a43"
+    ],
+    [
+      "a68",
+      "a43"
+    ],
+    [
+      "a98",
+      "a9"
+    ],
+    [
+      "a43",
+      "a9"
+    ],
+    [
+      "a42",
+      "a99"
+    ],
+    [
+      "a36",
+      "a99"
+    ],
+    [
+      "a51",
+      "a99"
+    ],
+    [
+      "a61",
+      "a110"
+    ],
+    [
+      "a37",
+      "a110"
+    ],
+    [
+      "a6",
+      "a110"
+    ],
+    [
+      "a53",
+      "a81"
+    ],
+    [
+      "a117",
+      "a81"
+    ],
+    [
+      "a66",
+      "a78"
+    ],
+    [
+      "a64",
+      "a0"
+    ],
+    [
+      "a100",
+      "a52"
+    ],
+    [
+      "a4",
+      "a52"
+    ],
+    [
+      "a46",
+      "a31"
+    ],
+    [
+      "a66",
+      "a54"
+    ],
+    [
+      "a3",
+      "a54"
+    ],
+    [
+      "a67",
+      "a29"
+    ],
+    [
+      "a101",
+      "a29"
+    ],
+    [
+      "a50",
+      "a55"
+    ],
+    [
+      "a15",
+      "a44"
+    ],
+    [
+      "a49",
+      "a44"
+    ],
+    [
+      "a115",
+      "a44"
+    ],
+    [
+      "a29",
+      "a44"
+    ],
+    [
+      "a22",
+      "a30"
+    ],
+    [
+      "a56",
+      "a30"
+    ],
+    [
+      "a6",
+      "a92"
+    ]
+  ],
+  "clusters": [
+    [
+      "a43",
+      "a91"
+    ],
+    [
+      "a17",
+      "a51"
+    ],
+    [
+      "a112",
+      "a11"
+    ],
+    [
+      "a88",
+      "a36"
+    ],
+    [
+      "a107",
+      "a34"
+    ],
+    [
+      "a94",
+      "a93"
+    ]
+  ],
+  "t_crqc": 13,
+  "meta": {
+    "generator": "pqcsched.generate.generate",
+    "params": {
+      "size": 120,
+      "T": 24,
+      "dep_density": 0.3,
+      "budget_tightness": 0.6,
+      "deadline_pressure": 0.4,
+      "cluster_frac": 0.1,
+      "delayed_frac": 0.15,
+      "t_crqc": 13,
+      "max_in_degree": 4,
+      "seed": 42
+    },
+    "stats": {
+      "n_assets": 120,
+      "n_deps": 145,
+      "n_clusters": 6,
+      "n_mandated": 53,
+      "total_cost": 542,
+      "per_period_budget": 38,
+      "realized_tightness": 0.5943
+    }
+  }
+}
