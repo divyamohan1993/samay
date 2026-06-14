@@ -1,0 +1,305 @@
+# SAMAY: Optimal Scheduling for Post-Quantum Cryptographic Migration — and an Honest Test of Whether It Beats Greedy
+
+*Divya Mohan (dmj.one). Research preprint / open-source reference tool. Code: `pqcsched`, Apache-2.0.*
+
+> **Status:** results sections marked ⏳ are populated from the reproducible study
+> in `runs/` (see §10). The formulation, baselines, generator, evaluation
+> protocol, and case study are final. Numbers were **pre-registered** in
+> `PROGRESS.md` before the study was run.
+
+---
+
+## Abstract
+
+Post-quantum cryptographic (PQC) migration is mandated and on a clock (NIST FIPS
+203/204/205; NIST IR 8547 disfavouring RSA/ECC by 2030 and disallowing by 2035;
+NSA CNSA 2.0; India's National Quantum Mission *Roadmap to Quantum Resiliency*).
+Every commercial platform prioritises **qualitatively** — discover the crypto,
+score risk, "migrate highest-risk first." We give the first **combinatorial-
+optimization formulation of the migration *schedule*** itself: a time-indexed
+mixed-integer / constraint program that, given a cryptographic inventory (a
+CycloneDX CBOM or a synthetic estate), computes a **provably optimal** phased plan
+— which asset to migrate, in which period, in what order — under dependency,
+per-period budget, earliest-availability, co-migration, and regulatory-deadline
+constraints, minimising harvest-now-decrypt-later (HNDL) aware time-integrated
+residual risk. We then ask the falsifiable question the field has not: **does
+optimal scheduling actually beat greedy risk-ranking, and when?** We contribute
+(i) the formulation, (ii) an open-source solver (OR-Tools CP-SAT primary; HiGHS/
+CBC free fallbacks; Gurobi optional), (iii) the first reusable synthetic
+benchmark for PQC migration scheduling, (iv) a matheuristic for estates too large
+to solve exactly, and (v) a reproducible empirical study across a difficulty grid.
+⏳ *Headline finding (RQ2) and regime map summarised here once the study run
+completes.* In a stylised **India Digital Public Infrastructure** case study
+(Aadhaar/UPI/DigiLocker/eSign/CCA PKI, 26 vulnerable assets), the optimal schedule
+not only lowers residual risk versus the best greedy but, unlike three of five
+greedy heuristics, **meets every regulatory deadline** — the greedy heuristics
+paint themselves into an infeasible corner. The contribution is honest either way:
+where greedy is near-optimal we say so and map the boundary where it is not.
+
+---
+
+## 1. Why this exists
+
+PQC migration is a deadline-driven program of work over years, not a one-shot
+swap. The threat has two clocks: a **regulatory** clock (NIST/CNSA/India NQM
+deadlines) and a **harvest-now-decrypt-later** clock — data encrypted today under
+RSA/ECC can be captured now and decrypted once a cryptographically-relevant
+quantum computer (CRQC) exists, so any secret whose confidentiality lifetime
+reaches the CRQC era is *already* at risk. An estate has hundreds to millions of
+cryptographic usages with dependencies (a service cannot present a PQC certificate
+before its CA is PQC; both ends of a protocol must move together), finite
+migration capacity per period, and assets that cannot move until their vendor
+ships PQC support.
+
+Every commercial platform today handles the resulting prioritisation
+**qualitatively**. No rigorous combinatorial-optimization formulation of the
+*schedule* exists in the literature or in any product (§3). That is the gap SAMAY
+fills, as a research / open-source contribution, sitting on the rare
+**operations-research × cryptography** intersection.
+
+This is explicitly **not** a discovery/scanning tool. Inventory is owned by
+funded vendors; SAMAY is the *planning brain* that consumes their output (a CBOM).
+
+---
+
+## 2. Scope and honest framing
+
+- A **paper + open-source reference tool**, not a product. The method must be
+  novel; it is.
+- **Consume, don't discover.** Ingest CycloneDX CBOM and synthetic instances.
+- **Honest even if negative.** If optimal ≈ greedy across realistic regimes, that
+  is a publishable, useful result ("you don't need MILP — here is the evidence and
+  the boundary where it breaks"). We do not tune the instance distribution to
+  flatter the optimizer; the generator distributions were pre-registered.
+- **No overclaiming.** The schedule is optimal *with respect to a stated risk/cost
+  model and the input quality*; both are limitations we state plainly (§13).
+
+---
+
+## 3. Related work and positioning
+
+*(Full citations and verification in `research/timelines-and-related-work.md`.)*
+
+**Standards and timelines.** NIST finalised the PQC standards FIPS 203 (ML-KEM),
+204 (ML-DSA), 205 (SLH-DSA) in Aug 2024; NIST IR 8547 sets the transition
+(disfavour RSA/ECC by 2030, disallow by 2035); NSA CNSA 2.0 sets sector
+milestones (software/firmware signing, networking, then general use, through
+~2030–2033). India's National Quantum Mission *Report on a Quantum-Safe Ecosystem
+— Roadmap to Quantum Resiliency* (DST task force, 2026) proposes a **Quantum
+Readiness Index** to assess exposure and prioritise migration, with critical
+infrastructure quantum-safe by 2029 and enterprises by 2033 — i.e. policy itself
+asks for exactly the prioritisation SAMAY formalises.
+
+**Migration as a research problem.** A EUROCRYPT 2026 affiliated workshop
+(**MAgiCS**, Rome, May 2026) exists precisely because cryptographic migration and
+agility modelling are "largely unsolved," with explicit sessions on formal models
+of migration, CBOM, and benchmarking. *Identifying Research Challenges in PQC
+Migration and Cryptographic Agility* (arXiv:1909.07353) calls for treating the
+migration time horizon as a first-order design parameter. *On the Formalization of
+Cryptographic Migration* (arXiv:2408.05997) formalises migration dependency
+sub-graphs and **migration clusters** — the dependency/co-migration structure our
+constraints build directly on.
+
+**The gap.** Existing academic work is qualitative strategy, timeline synthesis,
+or dependency-graph *formalization*; commercial tools score and rank. A targeted
+search (incl. patents) found only per-asset *algorithm-selection* optimization
+(e.g. the US PQC-optimization patent family) — **not estate scheduling**. We found
+no prior combinatorial-optimization formulation of the migration *schedule* with a
+budget-and-precedence-constrained, HNDL-aware, time-integrated objective. SAMAY is,
+to our knowledge, the first, and it is accompanied by the first reusable benchmark.
+
+---
+
+## 4. Problem formulation (RQ1 — the model is the contribution)
+
+A cryptographic estate is a set of quantum-vulnerable **assets** (cryptographic
+usages) over a horizon of discrete periods `t ∈ {0,…,T−1}`. For asset `i`:
+criticality/exposure `crit_i`, data secrecy lifetime (shelf-life) `s_i`, migration
+effort `c_i`, performance penalty `π_i`, earliest feasible period `e_i`, and an
+optional mandated deadline `D_i`. A dependency edge `(j,i)` means *j must complete
+no later than i*; a co-migration cluster `(i,j)` means *i,j migrate in the same
+period*. `t_crqc` is the projected CRQC period.
+
+**Decision variables.** `y_{i,t} ∈ {0,1}` = asset `i` migrated in period `t`
+(created only for `t ≥ e_i`, and `t ≤ D_i` for mandated assets). Cumulative
+`done_{i,t} = Σ_{τ≤t} y_{i,τ}`.
+
+**Constraints.**
+1. Migrate at most once; mandated assets exactly once by deadline:
+   `Σ_t y_{i,t} ≤ 1`; for mandated `i`, `Σ_{t≤D_i} y_{i,t} = 1`.
+2. Earliest feasibility: `y_{i,t}=0` for `t < e_i` (variables omitted).
+3. Per-period budget: `Σ_i c_i·y_{i,t} ≤ B_t`.
+4. Precedence: for edge `(j,i)` and all `t`, `done_{i,t} ≤ done_{j,t}`.
+5. Co-migration: `y_{i,t}=y_{j,t}` for clustered `(i,j)`.
+6. *(Optional)* coexistence/performance budget on a path `k`:
+   `Σ_{i∈path_k} π_i·done_{i,t} ≤ W_k` (used only for the constrained-edge study).
+
+**Objective (HNDL-aware, time-integrated residual risk).** The per-period residual
+risk of leaving `i` unmigrated at `t` is
+`r_{i,t} = crit_i` if `t + s_i ≥ t_crqc` (the HNDL window reaches the CRQC era),
+else `r_{i,t} = ⌊ρ·crit_i⌋` with residual factor `ρ` (default 0.1). Minimise total
+residual risk
+`R = Σ_i Σ_t r_{i,t}·(1 − done_{i,t}) = Σ_i Σ_{t < τ_i} r_{i,t}`,
+i.e. risk accrues for every period strictly before the migration period `τ_i`.
+This is a precedence-and-budget-constrained scheduling/knapsack problem in the IRP
+family.
+
+**Why all-integer.** `crit_i, c_i, B_t` and every `r_{i,t}` are integers, so the
+CP-SAT objective equals the independent scorer's risk *exactly* (verified by a
+parity test). This removes float-scaling error and makes the optimal-vs-greedy
+comparison watertight: a single scorer judges the MILP schedule and every greedy.
+
+**A key honest property.** `R` is well-defined even when a schedule leaves a
+*mandated* asset unmigrated — it simply keeps accruing risk — so a greedy that
+misses a deadline is penalised *naturally*, with no arbitrary big-M. We
+additionally report deadline-violation rates separately.
+
+**Cost and the Pareto frontier.** Total cost `C = Σ_i Σ_t c_i·y_{i,t}`. We trace
+the risk–cost Pareto frontier by the ε-constraint method (minimise `R` s.t.
+`C ≤ ε`, sweeping `ε`) on representative instances.
+
+---
+
+## 5. Baselines (the vendor status quo we measure against)
+
+All greedy heuristics respect earliest-start, precedence, per-period budget, and
+co-migration (clusters collapsed to union-find groups so a greedy can never split
+a pair), and are scored on the **same** objective as the MILP:
+
+- **highest-risk-first** (sort by total exposure),
+- **highest-risk-per-cost** (knapsack-greedy by risk/effort),
+- **earliest-deadline-first**,
+- **shortest-processing-time / lowest-cost-first**,
+- **random** (lower bound).
+
+The optimal-vs-each-baseline paired gap is the core experimental result.
+
+---
+
+## 6. Synthetic benchmark generator (a first-class, reusable artifact)
+
+No public benchmark exists for PQC migration *scheduling*. Our generator produces
+realistic estates controllable along **size × dependency-density × budget-tightness
+× deadline-pressure**, plus shelf-life mix, co-migration fraction, and delayed PQC
+availability. Distributions were **pre-registered** (`configs/gen.yaml`,
+`PROGRESS.md`) and calibrated from public sources (PQC sizes/perf; TLS/PKI
+prevalence — RSA≈65%/ECDSA≈35% of certs, chain depth 2–3; HNDL data-lifetime
+classes), documented in `research/calibration-crypto.md`. **One period = one
+year** (t=0 ≡ 2026, horizon to 2045): this makes HNDL fire meaningfully against a
+CRQC ~2039 and keeps the time-indexed model tractable. Feasibility is engineered
+in (acyclic dependencies, earliest propagated along edges, deadlines ≥ earliest,
+budget floored at the largest single cost so every asset fits); residual
+infeasible draws are resampled and the rate reported honestly.
+
+---
+
+## 7. Solvers and environment (CPU-native)
+
+OR-Tools **CP-SAT** is primary (exact, free, excellent on precedence/budget/
+knapsack scheduling). **HiGHS** and **CBC** (via a thin PuLP-based abstraction) are
+the free MILP fallbacks; **Gurobi** is optional and never a hard dependency. For
+estates too large to solve exactly we provide a **matheuristic** (rolling-horizon
+window decomposition and Large-Neighborhood Search). All runs are CPU-only (no
+GPU); the study ran on a 12-vCPU AMD EPYC (Genoa) VM. Seeds are fixed; solver
+version and parameters are logged with every result.
+
+---
+
+## 8. Evaluation protocol (pre-registered)
+
+- **Paired gaps.** For each instance, `gap_b = (R_greedy_b − R_opt)/R_opt`,
+  computed only when the instance is **proven OPTIMAL** and the greedy is feasible;
+  aggregated by **bootstrap confidence intervals** over the paired per-instance
+  gaps (not mean-vs-mean across different instances).
+- **OPTIMAL-only headline.** Solver status is recorded on every solve; time-limited
+  (FEASIBLE) solves are excluded from the gap and routed to the scalability study.
+- **Honest infeasibility.** INFEASIBLE draws are resampled; the rate is reported.
+- **Grid (pre-registered).** size 45, T=20; dependency-density {0.1,0.4,0.7} ×
+  budget-tightness {0.4,0.6,0.8,0.95} × deadline-pressure {0.1,0.4,0.8}; 30
+  instances/cell. Plus a size sweep, an exact-scalability sweep, a sensitivity
+  sweep (t_crqc {2035,2039,2043} × risk-form {step,linear} × ρ {0,0.1,0.25}), and
+  ε-constraint Pareto frontiers on representative instances.
+
+---
+
+## 9. Results — RQ2: does optimal beat greedy, and when?
+
+⏳ *Populated from `runs/main_summary.csv`.* Reports, per greedy baseline: mean
+paired objective-gap with bootstrap 95% CI; the **regime map** (where greedy is
+within X% of optimal vs badly suboptimal across budget-tightness × deadline-
+pressure × dependency-density); and greedy feasibility (deadline-violation) rates.
+Headline plot: `artifacts/fig_gap_heatmap.png`. Honest summary of the boundary
+where greedy suffices vs where optimization pays.
+
+## 10. Results — RQ3: scalability and the matheuristic
+
+⏳ *Populated from `runs/scalability_exact.csv` + the matheuristic run.* Exact
+solve-time and proven-optimal fraction vs estate size (the cliff); matheuristic
+quality (gap to optimal where known) and speed at large scale.
+Plot: `artifacts/fig_scalability.png`.
+
+## 11. Results — sensitivity
+
+⏳ *Populated from `runs/sensitivity_summary.csv`.* How the optimal-vs-greedy
+conclusion shifts as `t_crqc`, the residual factor `ρ`, and the risk-model form
+vary — i.e. how model-dependent the finding is.
+
+## 12. Case study — India Digital Public Infrastructure
+
+A stylised India-DPI estate modelled from **public** architecture (Aadhaar/UIDAI,
+UPI/NPCI, DigiLocker, eSign, CCA PKI) — *not* internal data (see
+`research/cbom-and-dpi.md`). 26 quantum-vulnerable assets, 27 precedence edges, 4
+co-migration clusters, 18 regulatory mandates, over an 18-quarter horizon
+(2026Q3–2030Q4); a genuine HNDL marquee (the RSA-2048-wrapped Aadhaar PID session
+key) and HSM-held long-lived secrets. Migration effort, absent from the estate (as
+from any real CBOM), is assigned by a documented default-by-asset-kind model.
+
+**Result.** CP-SAT proves the optimum in ~1.5 s. The optimal schedule beats the
+best greedy (highest-risk-first) on residual risk; and, decisively, **three of
+five greedy heuristics (risk-per-cost, shortest-processing-time, random) miss a
+mandated regulatory deadline**, producing an infeasible roadmap, whereas the
+optimal plan satisfies **all 18 mandates**. Here the value of optimization is not
+merely a few percent of risk — it is **feasibility under regulatory pressure**, a
+failure mode of myopic ranking that this dependency-and-deadline-rich estate
+exposes sharply. ⏳ *Roadmap Gantt, risk-over-time, and Pareto figures:
+`artifacts/case_*.png`.*
+
+---
+
+## 13. Limitations (stated plainly)
+
+- **Optimality is relative to the model.** The schedule is optimal w.r.t. the
+  stated risk/cost model and inputs. Real estates may have effects we do not model
+  (partial migration, rollback, hybrid-then-pure two-step moves).
+- **Input quality bounds output quality.** Garbage CBOM in → garbage schedule out.
+  Cost, shelf-life, criticality, and dependencies are frequently absent from real
+  CBOMs and are supplied by a documented default model the user should override.
+- **Risk-model dependence.** The HNDL step form and residual factor are modelling
+  choices; §11 sensitivity-tests them, but conclusions are conditional on them.
+- **Synthetic distributions.** Calibrated from public sources, not from a census of
+  real estates (none is public). The generator is a hypothesis about realistic
+  structure, pre-registered to avoid post-hoc tuning.
+- **Annual periods** trade intra-year granularity for tractability (the case study
+  uses quarters); finer horizons raise the variable count and shrink the exactly-
+  solvable frontier.
+
+---
+
+## 14. Reproducibility
+
+`pip install -e .` in a fresh Python 3.12 venv (CPU-only). `scripts/00_setup.sh`
+is one-step on a blank Ubuntu box. `requirements.lock.txt` pins versions.
+Re-run the whole study with `scripts/run_main_study.py --grid
+configs/experiment.yaml` (checkpointed/resumable). All seeds fixed; solver
+versions and parameters logged per row in `runs/*.csv`. `PROGRESS.md` is the dated
+decision log and holds the pre-registration.
+
+---
+
+## 15. References
+
+See `research/timelines-and-related-work.md` and `research/calibration-crypto.md`
+for the full, verified citation list (NIST FIPS 203/204/205; NIST IR 8547; CNSA
+2.0; India NQM Roadmap to Quantum Resiliency / Quantum Readiness Index; GRI Quantum
+Threat Timeline; MAgiCS 2026; arXiv:1909.07353; arXiv:2408.05997; CycloneDX CBOM
+spec; OR-Tools CP-SAT; HiGHS; CBC/PuLP).

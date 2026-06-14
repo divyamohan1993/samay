@@ -1,0 +1,92 @@
+{
+  "instance": {
+    "n_assets": 26,
+    "n_deps": 27,
+    "n_clusters": 4,
+    "n_mandated": 18,
+    "total_cost": 203,
+    "per_period_budget": 21,
+    "realized_tightness": 0.537
+  },
+  "horizon": "1=2026Q3 ... 18=2030Q4",
+  "optimal": {
+    "status": "OPTIMAL",
+    "risk": 8746,
+    "cost": 203,
+    "walltime_s": 0.37
+  },
+  "baselines": {
+    "highest_risk": {
+      "risk": 9117,
+      "cost": 203,
+      "feasible": true,
+      "deadline_violations": 0,
+      "gap": 0.0424
+    },
+    "risk_per_cost": {
+      "risk": 9766,
+      "cost": 203,
+      "feasible": false,
+      "deadline_violations": 1,
+      "gap": 0.1166
+    },
+    "edf": {
+      "risk": 9389,
+      "cost": 203,
+      "feasible": true,
+      "deadline_violations": 0,
+      "gap": 0.0735
+    },
+    "spt": {
+      "risk": 11637,
+      "cost": 203,
+      "feasible": false,
+      "deadline_violations": 1,
+      "gap": 0.3306
+    },
+    "random": {
+      "risk": 11851,
+      "cost": 203,
+      "feasible": false,
+      "deadline_violations": 1,
+      "gap": 0.355
+    }
+  },
+  "n_greedies_infeasible": 3,
+  "pareto_points": [
+    {
+      "cost": 180,
+      "risk": 9289
+    },
+    {
+      "cost": 187,
+      "risk": 9259
+    },
+    {
+      "cost": 189,
+      "risk": 8786
+    },
+    {
+      "cost": 196,
+      "risk": 8761
+    },
+    {
+      "cost": 203,
+      "risk": 8746
+    }
+  ],
+  "sensitivity_tcrqc": {
+    "22": {
+      "status": "OPTIMAL",
+      "opt_risk": 8746
+    },
+    "30": {
+      "status": "OPTIMAL",
+      "opt_risk": 8746
+    },
+    "38": {
+      "status": "OPTIMAL",
+      "opt_risk": 8746
+    }
+  }
+}

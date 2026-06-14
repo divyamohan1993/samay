@@ -1,0 +1,484 @@
+{
+  "horizon_T": 18,
+  "period_unit": "quarter",
+  "period_index_note": "1=2026Q3 ... 18=2030Q4",
+  "assets": [
+    {
+      "id": "RCAI-root",
+      "pillar": "CCA PKI",
+      "crypto_usage": "RSA root cert-signing (trust anchor)",
+      "criticality": 5,
+      "shelf_life_tier": "none",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 3,
+      "deadline": 11
+    },
+    {
+      "id": "CCA-IOG-policy",
+      "pillar": "CCA PKI",
+      "crypto_usage": "interop policy (SHA-2/RSA-2048/ECDSA-P256) \u2014 context",
+      "criticality": 3,
+      "shelf_life_tier": "none",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": false,
+      "earliest": 0,
+      "deadline": 11
+    },
+    {
+      "id": "licensedCA-eMudhra",
+      "pillar": "CCA PKI",
+      "crypto_usage": "licensed-CA cert-signing (DSC/SSL)",
+      "criticality": 5,
+      "shelf_life_tier": "none",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 4,
+      "deadline": 13
+    },
+    {
+      "id": "licensedCA-IDRBT",
+      "pillar": "CCA PKI",
+      "crypto_usage": "banking-sector licensed-CA signing",
+      "criticality": 5,
+      "shelf_life_tier": "none",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 4,
+      "deadline": 11
+    },
+    {
+      "id": "licensedCA-NIC-CA",
+      "pillar": "CCA PKI",
+      "crypto_usage": "govt licensed-CA signing (DigiLocker/eSign issuers)",
+      "criticality": 5,
+      "shelf_life_tier": "none",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 4,
+      "deadline": 13
+    },
+    {
+      "id": "UIDAI-hsm-keys",
+      "pillar": "Aadhaar",
+      "crypto_usage": "HSM-held UIDAI private keys",
+      "criticality": 5,
+      "shelf_life_tier": "long",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 5,
+      "deadline": 10
+    },
+    {
+      "id": "UIDAI-pubkey-RSA2048",
+      "pillar": "Aadhaar",
+      "crypto_usage": "RSA-2048 wrap of PID AES-256 session key (HNDL marquee)",
+      "criticality": 5,
+      "shelf_life_tier": "long",
+      "internet_facing": true,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 4,
+      "deadline": 10
+    },
+    {
+      "id": "UIDAI-auth-endpoint",
+      "pillar": "Aadhaar",
+      "crypto_usage": "Auth API TLS endpoint",
+      "criticality": 5,
+      "shelf_life_tier": "long",
+      "internet_facing": true,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 2,
+      "deadline": 12
+    },
+    {
+      "id": "UIDAI-ekyc-endpoint",
+      "pillar": "Aadhaar",
+      "crypto_usage": "e-KYC API TLS endpoint",
+      "criticality": 5,
+      "shelf_life_tier": "long",
+      "internet_facing": true,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 2,
+      "deadline": 12
+    },
+    {
+      "id": "UIDAI-authxml-sig",
+      "pillar": "Aadhaar",
+      "crypto_usage": "XML-DSig SHA-256/RSA on Auth XML",
+      "criticality": 4,
+      "shelf_life_tier": "none",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 3,
+      "deadline": 14
+    },
+    {
+      "id": "AUA-ASA-DSC",
+      "pillar": "Aadhaar",
+      "crypto_usage": "AUA/ASA signing DSC (leaf)",
+      "criticality": 3,
+      "shelf_life_tier": "none",
+      "internet_facing": false,
+      "mandated": false,
+      "quantum_vulnerable": true,
+      "earliest": 3,
+      "deadline": 14
+    },
+    {
+      "id": "AUA-TLS-endpoint",
+      "pillar": "Aadhaar",
+      "crypto_usage": "AUA server TLS to ASA/UIDAI",
+      "criticality": 3,
+      "shelf_life_tier": "med",
+      "internet_facing": true,
+      "mandated": false,
+      "quantum_vulnerable": true,
+      "earliest": 1,
+      "deadline": 12
+    },
+    {
+      "id": "UPI-switch-TLS",
+      "pillar": "UPI",
+      "crypto_usage": "central UPI switch TLS (internet + interbank)",
+      "criticality": 5,
+      "shelf_life_tier": "med",
+      "internet_facing": true,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 2,
+      "deadline": 12
+    },
+    {
+      "id": "UPI-switch-sig",
+      "pillar": "UPI",
+      "crypto_usage": "request signing at the switch",
+      "criticality": 4,
+      "shelf_life_tier": "none",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 3,
+      "deadline": 12
+    },
+    {
+      "id": "NPCI-HSM-pin",
+      "pillar": "UPI",
+      "crypto_usage": "HSM PIN-block processing",
+      "criticality": 5,
+      "shelf_life_tier": "med",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 5,
+      "deadline": 12
+    },
+    {
+      "id": "issuerbank-pubkey",
+      "pillar": "UPI",
+      "crypto_usage": "issuer-bank RSA pubkey (PIN/key wrap) \u2014 HNDL",
+      "criticality": 5,
+      "shelf_life_tier": "med",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 4,
+      "deadline": 12
+    },
+    {
+      "id": "issuerbank-TLS",
+      "pillar": "UPI",
+      "crypto_usage": "bank core TLS endpoint",
+      "criticality": 4,
+      "shelf_life_tier": "med",
+      "internet_facing": true,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 2,
+      "deadline": 12
+    },
+    {
+      "id": "PSP-app-TLS",
+      "pillar": "UPI",
+      "crypto_usage": "PSP/TPAP app client TLS",
+      "criticality": 4,
+      "shelf_life_tier": "short",
+      "internet_facing": true,
+      "mandated": false,
+      "quantum_vulnerable": true,
+      "earliest": 1,
+      "deadline": 12
+    },
+    {
+      "id": "PSP-app-sig",
+      "pillar": "UPI",
+      "crypto_usage": "PSP app request signing",
+      "criticality": 2,
+      "shelf_life_tier": "none",
+      "internet_facing": false,
+      "mandated": false,
+      "quantum_vulnerable": true,
+      "earliest": 1,
+      "deadline": 16
+    },
+    {
+      "id": "tokenization-svc",
+      "pillar": "UPI",
+      "crypto_usage": "card/UPI tokenization key-wrap",
+      "criticality": 3,
+      "shelf_life_tier": "med",
+      "internet_facing": true,
+      "mandated": false,
+      "quantum_vulnerable": true,
+      "earliest": 2,
+      "deadline": 16
+    },
+    {
+      "id": "DigiLocker-TLS",
+      "pillar": "DigiLocker",
+      "crypto_usage": "portal/API TLS",
+      "criticality": 4,
+      "shelf_life_tier": "med",
+      "internet_facing": true,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 1,
+      "deadline": 14
+    },
+    {
+      "id": "DigiLocker-issuer-sig",
+      "pillar": "DigiLocker",
+      "crypto_usage": "issuer XML document signatures",
+      "criticality": 4,
+      "shelf_life_tier": "none",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 3,
+      "deadline": 14
+    },
+    {
+      "id": "DigiLocker-ekyc-tls",
+      "pillar": "DigiLocker",
+      "crypto_usage": "DigiLocker->UIDAI e-KYC client TLS",
+      "criticality": 3,
+      "shelf_life_tier": "med",
+      "internet_facing": true,
+      "mandated": false,
+      "quantum_vulnerable": true,
+      "earliest": 2,
+      "deadline": 12
+    },
+    {
+      "id": "eSign-ESP-endpoint",
+      "pillar": "eSign",
+      "crypto_usage": "ESP TLS endpoint",
+      "criticality": 4,
+      "shelf_life_tier": "med",
+      "internet_facing": true,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 2,
+      "deadline": 14
+    },
+    {
+      "id": "eSign-shortlived-sig",
+      "pillar": "eSign",
+      "crypto_usage": "30-min one-time signer cert (RSA/SHA-256)",
+      "criticality": 3,
+      "shelf_life_tier": "none",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 3,
+      "deadline": 14
+    },
+    {
+      "id": "eSign-ekyc-tls",
+      "pillar": "eSign",
+      "crypto_usage": "eSign->UIDAI e-KYC client TLS",
+      "criticality": 3,
+      "shelf_life_tier": "med",
+      "internet_facing": true,
+      "mandated": false,
+      "quantum_vulnerable": true,
+      "earliest": 2,
+      "deadline": 12
+    },
+    {
+      "id": "GIGW-CDN-TLS",
+      "pillar": "shared",
+      "crypto_usage": "front CDN/edge TLS",
+      "criticality": 2,
+      "shelf_life_tier": "short",
+      "internet_facing": true,
+      "mandated": false,
+      "quantum_vulnerable": true,
+      "earliest": 0,
+      "deadline": 12
+    }
+  ],
+  "deps_precedence_j_to_i": [
+    [
+      "RCAI-root",
+      "licensedCA-eMudhra"
+    ],
+    [
+      "RCAI-root",
+      "licensedCA-IDRBT"
+    ],
+    [
+      "RCAI-root",
+      "licensedCA-NIC-CA"
+    ],
+    [
+      "CCA-IOG-policy",
+      "licensedCA-eMudhra"
+    ],
+    [
+      "CCA-IOG-policy",
+      "licensedCA-IDRBT"
+    ],
+    [
+      "CCA-IOG-policy",
+      "licensedCA-NIC-CA"
+    ],
+    [
+      "licensedCA-eMudhra",
+      "AUA-ASA-DSC"
+    ],
+    [
+      "licensedCA-eMudhra",
+      "eSign-shortlived-sig"
+    ],
+    [
+      "licensedCA-IDRBT",
+      "UPI-switch-sig"
+    ],
+    [
+      "licensedCA-IDRBT",
+      "issuerbank-TLS"
+    ],
+    [
+      "licensedCA-NIC-CA",
+      "DigiLocker-issuer-sig"
+    ],
+    [
+      "licensedCA-NIC-CA",
+      "UIDAI-authxml-sig"
+    ],
+    [
+      "UIDAI-hsm-keys",
+      "UIDAI-pubkey-RSA2048"
+    ],
+    [
+      "UIDAI-hsm-keys",
+      "UIDAI-authxml-sig"
+    ],
+    [
+      "UIDAI-pubkey-RSA2048",
+      "UIDAI-auth-endpoint"
+    ],
+    [
+      "UIDAI-pubkey-RSA2048",
+      "UIDAI-ekyc-endpoint"
+    ],
+    [
+      "UIDAI-authxml-sig",
+      "AUA-ASA-DSC"
+    ],
+    [
+      "UIDAI-auth-endpoint",
+      "AUA-TLS-endpoint"
+    ],
+    [
+      "UPI-switch-TLS",
+      "PSP-app-TLS"
+    ],
+    [
+      "UPI-switch-sig",
+      "PSP-app-sig"
+    ],
+    [
+      "issuerbank-pubkey",
+      "NPCI-HSM-pin"
+    ],
+    [
+      "issuerbank-TLS",
+      "UPI-switch-TLS"
+    ],
+    [
+      "UPI-switch-TLS",
+      "tokenization-svc"
+    ],
+    [
+      "UIDAI-ekyc-endpoint",
+      "DigiLocker-ekyc-tls"
+    ],
+    [
+      "UIDAI-ekyc-endpoint",
+      "eSign-ekyc-tls"
+    ],
+    [
+      "UIDAI-ekyc-endpoint",
+      "eSign-ESP-endpoint"
+    ],
+    [
+      "DigiLocker-ekyc-tls",
+      "DigiLocker-TLS"
+    ],
+    [
+      "eSign-ESP-endpoint",
+      "eSign-shortlived-sig"
+    ],
+    [
+      "GIGW-CDN-TLS",
+      "DigiLocker-TLS"
+    ],
+    [
+      "GIGW-CDN-TLS",
+      "UPI-switch-TLS"
+    ]
+  ],
+  "co_migration_clusters": [
+    [
+      "AUA-TLS-endpoint",
+      "UIDAI-auth-endpoint"
+    ],
+    [
+      "PSP-app-TLS",
+      "UPI-switch-TLS"
+    ],
+    [
+      "DigiLocker-ekyc-tls",
+      "UIDAI-ekyc-endpoint"
+    ],
+    [
+      "eSign-ekyc-tls",
+      "UIDAI-ekyc-endpoint"
+    ]
+  ],
+  "validation": {
+    "is_dag": true,
+    "precedence_monotone_violations": 0,
+    "self_infeasible": 0,
+    "mandated_infeasible": 0,
+    "cluster_deadline_conflicts": 0,
+    "counts": {
+      "total": 27,
+      "vulnerable": 26,
+      "internet_facing": 13,
+      "mandated": 19
+    }
+  }
+}

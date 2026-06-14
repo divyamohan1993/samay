@@ -1,0 +1,17 @@
+# Local run of the SAMAY demo. Hardened defaults mirror the Cloud Run posture.
+services:
+  samay:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - PQCSCHED_CORS_ORIGINS=http://localhost:8080
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped

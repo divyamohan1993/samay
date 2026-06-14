@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SAMAY · optimal post-quantum migration scheduling</title>
+<style>
+  :root{
+    --bg:#0b0f17; --panel:#121826; --panel2:#0e1422; --ink:#e7ecf5; --mut:#8a97ad;
+    --acc:#57d1c2; --acc2:#7aa2ff; --bad:#ff6b6b; --good:#54d18a; --line:#202a3d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#16243f 0,var(--bg) 55%);
+       color:var(--ink);font:15px/1.55 ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial}
+  .wrap{max-width:1040px;margin:0 auto;padding:32px 20px 80px}
+  header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  h1{font-size:30px;margin:0;letter-spacing:.3px}
+  .sam{font-weight:800;background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .dev{color:var(--mut);font-size:13px}
+  .lede{color:var(--mut);max-width:760px;margin:14px 0 26px}
+  .lede b{color:var(--ink)}
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+        border-radius:14px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;align-items:end}
+  label{display:block;font-size:12px;color:var(--mut);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px}
+  input[type=range]{width:100%}
+  .val{color:var(--acc);font-variant-numeric:tabular-nums}
+  button{appearance:none;border:0;border-radius:10px;padding:12px 18px;font-weight:700;cursor:pointer;
+         background:linear-gradient(90deg,var(--acc),var(--acc2));color:#04121a;font-size:15px}
+  button:disabled{opacity:.55;cursor:wait}
+  .row{display:flex;gap:18px;flex-wrap:wrap;margin-top:22px}
+  .row>.card{flex:1;min-width:300px}
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  th,td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  .opt{color:var(--good);font-weight:700}
+  .infeas{color:var(--bad);font-weight:700}
+  .gant{display:grid;gap:3px;margin-top:6px}
+  .gr{display:grid;grid-template-columns:130px 1fr;align-items:center;gap:8px}
+  .gr .nm{font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bar{height:14px;border-radius:4px;display:flex}
+  .cell{flex:1;border-right:1px solid #0c1320}
+  .mig{background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:3px}
+  .muted{color:var(--mut);font-size:13px}
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;background:#15203a;color:var(--acc2);font-size:12px;margin-left:6px}
+  footer{margin-top:34px;color:var(--mut);font-size:12.5px}
+  a{color:var(--acc2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><span class="sam">समय · SAMAY</span></h1>
+    <span class="dev">provably optimal post-quantum migration scheduling</span>
+  </header>
+  <p class="lede">Every vendor migrates crypto <b>highest-risk-first</b>. SAMAY computes the
+    <b>provably optimal</b> phased schedule under dependency, budget, and regulatory-deadline
+    constraints, then shows you exactly how much the greedy heuristics leave on the table, and
+    when they miss a mandate entirely. Generate a synthetic estate and solve it live.</p>
+
+  <div class="card">
+    <div class="controls">
+      <div><label>estate size <span class="val" id="vsize">45</span></label>
+        <input id="size" type="range" min="10" max="160" value="45"></div>
+      <div><label>budget tightness <span class="val" id="vt">0.65</span></label>
+        <input id="tight" type="range" min="30" max="98" value="65"></div>
+      <div><label>deadline pressure <span class="val" id="vp">0.40</span></label>
+        <input id="press" type="range" min="0" max="95" value="40"></div>
+      <div><label>dependency density <span class="val" id="vd">0.30</span></label>
+        <input id="dens" type="range" min="0" max="80" value="30"></div>
+      <div><button id="go">Generate &amp; solve →</button></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="card">
+      <h3 style="margin:.2em 0">Optimal vs greedy <span class="pill" id="status">idle</span></h3>
+      <div class="muted" id="meta">Move the sliders, then solve. Tighter budgets and harder deadlines
+        are where optimization pays — and where greedy can become infeasible.</div>
+      <table style="margin-top:12px">
+        <thead><tr><th>method</th><th>risk</th><th>gap vs optimal</th><th>feasible?</th></tr></thead>
+        <tbody id="rows"><tr><td class="muted" colspan="4">—</td></tr></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3 style="margin:.2em 0">Optimal roadmap</h3>
+      <div class="muted" id="rmeta">one row per asset; the bar marks the migration period.</div>
+      <div class="gant" id="gantt"></div>
+    </div>
+  </div>
+
+  <footer>
+    CPU-only optimization (OR-Tools CP-SAT). A research reference tool, not a product —
+    read the honest study in <code>REPORT.md</code>. Demo caps instance size and solver time.
+    <span id="ver"></span>
+  </footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const sync=()=>{ $("vsize").textContent=$("size").value;
+  $("vt").textContent=(+$("tight").value/100).toFixed(2);
+  $("vp").textContent=(+$("press").value/100).toFixed(2);
+  $("vd").textContent=(+$("dens").value/100).toFixed(2); };
+["size","tight","press","dens"].forEach(id=>$(id).addEventListener("input",sync)); sync();
+
+async function run(){
+  const btn=$("go"); btn.disabled=true; $("status").textContent="solving…";
+  try{
+    const g=await (await fetch("/gen",{method:"POST",headers:{"content-type":"application/json"},
+      body:JSON.stringify({size:+$("size").value, T:20, dep_density:+$("dens").value/100,
+        budget_tightness:+$("tight").value/100, deadline_pressure:+$("press").value/100, seed:7})})).json();
+    const r=await (await fetch("/solve",{method:"POST",headers:{"content-type":"application/json"},
+      body:JSON.stringify({instance:g, time_limit:8})})).json();
+    $("status").textContent=r.status+(r.optimal?" ✓":"");
+    $("status").className="pill";
+    const c=r.greedy_comparison||{}; const rm=r.roadmap||{};
+    $("meta").innerHTML=`optimal residual risk <b>${r.objective}</b> · cost <b>${rm.cost}</b> ·
+      ${rm.n_migrated} assets migrated · solved in ${r.wall_time}s`;
+    const order=["highest_risk","risk_per_cost","edf","spt","random"];
+    let html=`<tr><td class="opt">OPTIMAL</td><td>${r.objective}</td><td>—</td><td class="opt">yes</td></tr>`;
+    for(const b of order){ const v=c[b]; if(!v) continue;
+      const gap=v.gap_vs_optimal==null?"—":(v.gap_vs_optimal*100).toFixed(1)+"%";
+      html+=`<tr><td>${b.replace(/_/g,' ')}</td><td>${v.risk}</td><td>${gap}</td>
+        <td class="${v.feasible?'':'infeas'}">${v.feasible?'yes':'NO (misses mandate)'}</td></tr>`; }
+    $("rows").innerHTML=html;
+    // gantt
+    const T=g.T, plan=rm.plan_by_period||{}; const when={};
+    for(const t in plan) for(const a of plan[t]) when[a]=+t;
+    const ids=g.assets.map(a=>a.id).filter(a=>a in when).slice(0,40);
+    $("rmeta").textContent=`${Object.keys(when).length} assets across ${T} periods (showing ${ids.length})`;
+    $("gantt").innerHTML=ids.map(a=>{ const tt=when[a];
+      const cells=Array.from({length:T},(_,i)=>`<span class="cell ${i===tt?'mig':''}"></span>`).join("");
+      return `<div class="gr"><span class="nm">${a}</span><span class="bar">${cells}</span></div>`; }).join("");
+  }catch(e){ $("status").textContent="error"; $("meta").textContent=String(e); }
+  finally{ btn.disabled=false; }
+}
+$("go").addEventListener("click",run);
+fetch("/health").then(r=>r.json()).then(j=>$("ver").textContent="· v"+j.version).catch(()=>{});
+</script>
+</body>
+</html>

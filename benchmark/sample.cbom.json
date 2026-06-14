@@ -1,0 +1,385 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:6f5a1c2e-9b3d-4f7a-8c10-2d4e6f8a0b11",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-06-15T09:00:00Z",
+    "component": {
+      "type": "application",
+      "bom-ref": "samay-sample-estate",
+      "name": "SAMAY sample cryptographic estate",
+      "version": "1.0"
+    },
+    "properties": [
+      {
+        "name": "samay:note",
+        "value": "Synthetic CBOM hand-built strictly to the CycloneDX 1.6 schema bundled with cyclonedx-python-lib 11.x (bom-1.6.SNAPSHOT). Structure adapted from CycloneDX/bom-examples CBOM/Example-With-Dependencies, Certificate and Protocol samples; field values constrained to the 1.6 enum set. Models a small PKI + TLS estate (root CA, intermediate CA, TLS leaf, doc-signing leaf) for pqcsched CBOM-ingest testing."
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/protocol/tls@1.2",
+      "name": "TLSv1.2 (server endpoint)",
+      "cryptoProperties": {
+        "assetType": "protocol",
+        "protocolProperties": {
+          "type": "tls",
+          "version": "1.2",
+          "cipherSuites": [
+            {
+              "name": "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+              "algorithms": [
+                "crypto/algorithm/ecdh-p256@1.2.840.10045.3.1.7",
+                "crypto/algorithm/rsa-2048@1.2.840.113549.1.1.11",
+                "crypto/algorithm/aes-256-gcm@2.16.840.1.101.3.4.1.46",
+                "crypto/algorithm/sha-384@2.16.840.1.101.3.4.2.2"
+              ],
+              "identifiers": [ "0xC0", "0x30" ]
+            }
+          ],
+          "cryptoRefArray": [
+            "crypto/certificate/leaf-tls@sha256:aa01"
+          ]
+        },
+        "oid": "1.3.18.0.2.32.104"
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/certificate/root-ca@sha256:cc03",
+      "name": "Root CA certificate",
+      "cryptoProperties": {
+        "assetType": "certificate",
+        "certificateProperties": {
+          "subjectName": "C = IN, O = Sample Root CA, CN = Sample Root CA G1",
+          "issuerName": "C = IN, O = Sample Root CA, CN = Sample Root CA G1",
+          "notValidBefore": "2018-01-01T00:00:00Z",
+          "notValidAfter": "2033-01-01T00:00:00Z",
+          "signatureAlgorithmRef": "crypto/algorithm/rsa-4096@1.2.840.113549.1.1.12",
+          "subjectPublicKeyRef": "crypto/key/rsa-4096-rootca@1.2.840.113549.1.1.1",
+          "certificateFormat": "X.509",
+          "certificateExtension": "crt"
+        },
+        "oid": "1.2.840.113549.1.1.1"
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/certificate/intermediate-ca@sha256:bb02",
+      "name": "Intermediate (issuing) CA certificate",
+      "cryptoProperties": {
+        "assetType": "certificate",
+        "certificateProperties": {
+          "subjectName": "C = IN, O = Sample Trust Services, CN = Sample Issuing CA 1",
+          "issuerName": "C = IN, O = Sample Root CA, CN = Sample Root CA G1",
+          "notValidBefore": "2020-01-01T00:00:00Z",
+          "notValidAfter": "2030-01-01T00:00:00Z",
+          "signatureAlgorithmRef": "crypto/algorithm/rsa-4096@1.2.840.113549.1.1.12",
+          "subjectPublicKeyRef": "crypto/key/rsa-2048-ica@1.2.840.113549.1.1.1",
+          "certificateFormat": "X.509",
+          "certificateExtension": "crt"
+        },
+        "oid": "1.2.840.113549.1.1.1"
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/certificate/leaf-tls@sha256:aa01",
+      "name": "TLS server leaf certificate (api.example.in)",
+      "cryptoProperties": {
+        "assetType": "certificate",
+        "certificateProperties": {
+          "subjectName": "C = IN, O = Sample Service, CN = api.example.in",
+          "issuerName": "C = IN, O = Sample Trust Services, CN = Sample Issuing CA 1",
+          "notValidBefore": "2025-06-01T00:00:00Z",
+          "notValidAfter": "2026-09-01T00:00:00Z",
+          "signatureAlgorithmRef": "crypto/algorithm/rsa-2048@1.2.840.113549.1.1.11",
+          "subjectPublicKeyRef": "crypto/key/ecdsa-p256-leaf@1.2.840.10045.2.1",
+          "certificateFormat": "X.509",
+          "certificateExtension": "crt"
+        },
+        "oid": "1.2.840.10045.2.1"
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/certificate/leaf-docsign@sha256:dd04",
+      "name": "Document-signing leaf certificate",
+      "cryptoProperties": {
+        "assetType": "certificate",
+        "certificateProperties": {
+          "subjectName": "C = IN, O = Sample Service, CN = Document Signer 1",
+          "issuerName": "C = IN, O = Sample Trust Services, CN = Sample Issuing CA 1",
+          "notValidBefore": "2025-06-01T00:00:00Z",
+          "notValidAfter": "2027-06-01T00:00:00Z",
+          "signatureAlgorithmRef": "crypto/algorithm/rsa-2048@1.2.840.113549.1.1.11",
+          "subjectPublicKeyRef": "crypto/key/rsa-2048-docsign@1.2.840.113549.1.1.1",
+          "certificateFormat": "X.509",
+          "certificateExtension": "crt"
+        },
+        "oid": "1.2.840.113549.1.1.1"
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/algorithm/rsa-4096@1.2.840.113549.1.1.12",
+      "name": "SHA384withRSA-4096 (CA signing)",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "signature",
+          "parameterSetIdentifier": "4096",
+          "executionEnvironment": "hardware",
+          "implementationPlatform": "x86_64",
+          "certificationLevel": [ "fips140-2-l3" ],
+          "cryptoFunctions": [ "sign", "verify" ],
+          "classicalSecurityLevel": 140,
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": "1.2.840.113549.1.1.12"
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/algorithm/rsa-2048@1.2.840.113549.1.1.11",
+      "name": "SHA256withRSA-2048 (leaf signing)",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "signature",
+          "parameterSetIdentifier": "2048",
+          "executionEnvironment": "software-plain-ram",
+          "implementationPlatform": "x86_64",
+          "certificationLevel": [ "none" ],
+          "cryptoFunctions": [ "sign", "verify" ],
+          "classicalSecurityLevel": 112,
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": "1.2.840.113549.1.1.11"
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/algorithm/ecdh-p256@1.2.840.10045.3.1.7",
+      "name": "ECDH P-256 (TLS key agreement)",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "key-agree",
+          "parameterSetIdentifier": "P-256",
+          "curve": "P-256",
+          "executionEnvironment": "software-plain-ram",
+          "implementationPlatform": "x86_64",
+          "certificationLevel": [ "none" ],
+          "cryptoFunctions": [ "keygen" ],
+          "classicalSecurityLevel": 128,
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": "1.2.840.10045.3.1.7"
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/algorithm/ecdsa-p256@1.2.840.10045.4.3.2",
+      "name": "ECDSA with P-256 (leaf authentication)",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "signature",
+          "parameterSetIdentifier": "P-256",
+          "curve": "P-256",
+          "executionEnvironment": "software-plain-ram",
+          "implementationPlatform": "x86_64",
+          "certificationLevel": [ "none" ],
+          "cryptoFunctions": [ "sign", "verify" ],
+          "classicalSecurityLevel": 128,
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": "1.2.840.10045.4.3.2"
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/algorithm/aes-256-gcm@2.16.840.1.101.3.4.1.46",
+      "name": "AES-256-GCM (TLS record protection)",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "ae",
+          "mode": "gcm",
+          "parameterSetIdentifier": "256",
+          "executionEnvironment": "software-plain-ram",
+          "implementationPlatform": "x86_64",
+          "certificationLevel": [ "none" ],
+          "cryptoFunctions": [ "encrypt", "decrypt" ],
+          "classicalSecurityLevel": 256,
+          "nistQuantumSecurityLevel": 1
+        },
+        "oid": "2.16.840.1.101.3.4.1.46"
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/algorithm/sha-384@2.16.840.1.101.3.4.2.2",
+      "name": "SHA-384 (TLS PRF / digest)",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "hash",
+          "parameterSetIdentifier": "384",
+          "executionEnvironment": "software-plain-ram",
+          "implementationPlatform": "x86_64",
+          "certificationLevel": [ "none" ],
+          "cryptoFunctions": [ "digest" ],
+          "classicalSecurityLevel": 192,
+          "nistQuantumSecurityLevel": 2
+        },
+        "oid": "2.16.840.1.101.3.4.2.2"
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/key/rsa-4096-rootca@1.2.840.113549.1.1.1",
+      "name": "RSA-4096 root CA public key",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "relatedCryptoMaterialProperties": {
+          "type": "public-key",
+          "id": "key-rootca-4096",
+          "state": "active",
+          "size": 4096,
+          "algorithmRef": "crypto/algorithm/rsa-4096@1.2.840.113549.1.1.12",
+          "securedBy": {
+            "mechanism": "Hardware",
+            "algorithmRef": "crypto/algorithm/aes-256-gcm@2.16.840.1.101.3.4.1.46"
+          },
+          "creationDate": "2018-01-01T00:00:00Z",
+          "activationDate": "2018-01-01T00:00:00Z"
+        },
+        "oid": "1.2.840.113549.1.1.1"
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/key/rsa-2048-ica@1.2.840.113549.1.1.1",
+      "name": "RSA-2048 intermediate CA public key",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "relatedCryptoMaterialProperties": {
+          "type": "public-key",
+          "id": "key-ica-2048",
+          "state": "active",
+          "size": 2048,
+          "algorithmRef": "crypto/algorithm/rsa-2048@1.2.840.113549.1.1.11",
+          "creationDate": "2020-01-01T00:00:00Z",
+          "activationDate": "2020-01-01T00:00:00Z"
+        },
+        "oid": "1.2.840.113549.1.1.1"
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/key/ecdsa-p256-leaf@1.2.840.10045.2.1",
+      "name": "ECDSA P-256 TLS leaf public key",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "relatedCryptoMaterialProperties": {
+          "type": "public-key",
+          "id": "key-leaf-ec-p256",
+          "state": "active",
+          "size": 256,
+          "algorithmRef": "crypto/algorithm/ecdsa-p256@1.2.840.10045.4.3.2",
+          "creationDate": "2025-06-01T00:00:00Z",
+          "activationDate": "2025-06-01T00:00:00Z"
+        },
+        "oid": "1.2.840.10045.2.1"
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/key/rsa-2048-docsign@1.2.840.113549.1.1.1",
+      "name": "RSA-2048 document-signing public key",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "relatedCryptoMaterialProperties": {
+          "type": "public-key",
+          "id": "key-docsign-2048",
+          "state": "active",
+          "size": 2048,
+          "algorithmRef": "crypto/algorithm/rsa-2048@1.2.840.113549.1.1.11",
+          "creationDate": "2025-06-01T00:00:00Z",
+          "activationDate": "2025-06-01T00:00:00Z"
+        },
+        "oid": "1.2.840.113549.1.1.1"
+      }
+    }
+  ],
+  "dependencies": [
+    { "ref": "crypto/algorithm/rsa-4096@1.2.840.113549.1.1.12" },
+    { "ref": "crypto/algorithm/rsa-2048@1.2.840.113549.1.1.11" },
+    { "ref": "crypto/algorithm/ecdh-p256@1.2.840.10045.3.1.7" },
+    { "ref": "crypto/algorithm/ecdsa-p256@1.2.840.10045.4.3.2" },
+    { "ref": "crypto/algorithm/aes-256-gcm@2.16.840.1.101.3.4.1.46" },
+    { "ref": "crypto/algorithm/sha-384@2.16.840.1.101.3.4.2.2" },
+    {
+      "ref": "crypto/key/rsa-4096-rootca@1.2.840.113549.1.1.1",
+      "dependsOn": [ "crypto/algorithm/rsa-4096@1.2.840.113549.1.1.12" ]
+    },
+    {
+      "ref": "crypto/key/rsa-2048-ica@1.2.840.113549.1.1.1",
+      "dependsOn": [ "crypto/algorithm/rsa-2048@1.2.840.113549.1.1.11" ]
+    },
+    {
+      "ref": "crypto/key/ecdsa-p256-leaf@1.2.840.10045.2.1",
+      "dependsOn": [ "crypto/algorithm/ecdsa-p256@1.2.840.10045.4.3.2" ]
+    },
+    {
+      "ref": "crypto/key/rsa-2048-docsign@1.2.840.113549.1.1.1",
+      "dependsOn": [ "crypto/algorithm/rsa-2048@1.2.840.113549.1.1.11" ]
+    },
+    {
+      "ref": "crypto/certificate/root-ca@sha256:cc03",
+      "dependsOn": [
+        "crypto/algorithm/rsa-4096@1.2.840.113549.1.1.12",
+        "crypto/key/rsa-4096-rootca@1.2.840.113549.1.1.1"
+      ]
+    },
+    {
+      "ref": "crypto/certificate/intermediate-ca@sha256:bb02",
+      "dependsOn": [
+        "crypto/certificate/root-ca@sha256:cc03",
+        "crypto/algorithm/rsa-4096@1.2.840.113549.1.1.12",
+        "crypto/key/rsa-2048-ica@1.2.840.113549.1.1.1"
+      ]
+    },
+    {
+      "ref": "crypto/certificate/leaf-tls@sha256:aa01",
+      "dependsOn": [
+        "crypto/certificate/intermediate-ca@sha256:bb02",
+        "crypto/algorithm/rsa-2048@1.2.840.113549.1.1.11",
+        "crypto/key/ecdsa-p256-leaf@1.2.840.10045.2.1"
+      ]
+    },
+    {
+      "ref": "crypto/certificate/leaf-docsign@sha256:dd04",
+      "dependsOn": [
+        "crypto/certificate/intermediate-ca@sha256:bb02",
+        "crypto/algorithm/rsa-2048@1.2.840.113549.1.1.11",
+        "crypto/key/rsa-2048-docsign@1.2.840.113549.1.1.1"
+      ]
+    },
+    {
+      "ref": "crypto/protocol/tls@1.2",
+      "dependsOn": [
+        "crypto/certificate/leaf-tls@sha256:aa01",
+        "crypto/algorithm/ecdh-p256@1.2.840.10045.3.1.7",
+        "crypto/algorithm/rsa-2048@1.2.840.113549.1.1.11",
+        "crypto/algorithm/aes-256-gcm@2.16.840.1.101.3.4.1.46",
+        "crypto/algorithm/sha-384@2.16.840.1.101.3.4.2.2"
+      ]
+    }
+  ]
+}

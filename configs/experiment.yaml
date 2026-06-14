@@ -17,9 +17,9 @@ studies:
     residual_factors: [0.1]
     cluster_frac: 0.1
     delayed_frac: 0.15
-    n_instances: 30
-    time_limit: 60
-    workers: 6
+    n_instances: 18          # coverage-first: all 36 cells sampled; deepen later if time
+    time_limit: 40           # excluded hard-cell solves don't burn 60s
+    workers: 6               # polite cap (shared box: active praman job)
     base_seed: 1000
 
   # --- gap vs estate scale (exact regime) ----------------------------------
@@ -34,8 +34,8 @@ studies:
     residual_factors: [0.1]
     cluster_frac: 0.1
     delayed_frac: 0.15
-    n_instances: 30
-    time_limit: 90
+    n_instances: 20
+    time_limit: 75
     workers: 6
     base_seed: 2000
 
@@ -51,7 +51,7 @@ studies:
     residual_factors: [0.1]
     cluster_frac: 0.1
     delayed_frac: 0.15
-    n_instances: 8
+    n_instances: 6
     time_limit: 90
     workers: 6
     base_seed: 3000
@@ -68,7 +68,7 @@ studies:
     residual_factors: [0.0, 0.1, 0.25]
     cluster_frac: 0.1
     delayed_frac: 0.15
-    n_instances: 20
-    time_limit: 60
+    n_instances: 10
+    time_limit: 40
     workers: 6
     base_seed: 4000
