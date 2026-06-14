@@ -1,0 +1,74 @@
+# Pre-registered study grid (see PROGRESS.md "Pre-registered grid").
+# Consumed by `pqcsched study` and scripts/run_main_study.py via
+# experiment.expand_grid(**study) -> run_grid -> summarize.
+# workers=6 + nice is the shared-box good-neighbour policy (an active `praman`
+# job co-tenants the box); raise workers on a dedicated machine.
+
+studies:
+  # --- RQ2 headline: optimal vs greedy across the difficulty grid -----------
+  - study: main
+    sizes: [45]
+    Ts: [20]
+    dep_densities: [0.1, 0.4, 0.7]
+    budget_tightnesses: [0.4, 0.6, 0.8, 0.95]
+    deadline_pressures: [0.1, 0.4, 0.8]
+    t_crqcs: [13]
+    risk_forms: [step]
+    residual_factors: [0.1]
+    cluster_frac: 0.1
+    delayed_frac: 0.15
+    n_instances: 30
+    time_limit: 60
+    workers: 6
+    base_seed: 1000
+
+  # --- gap vs estate scale (exact regime) ----------------------------------
+  - study: size
+    sizes: [20, 30, 45, 60]
+    Ts: [20]
+    dep_densities: [0.4]
+    budget_tightnesses: [0.6]
+    deadline_pressures: [0.4]
+    t_crqcs: [13]
+    risk_forms: [step]
+    residual_factors: [0.1]
+    cluster_frac: 0.1
+    delayed_frac: 0.15
+    n_instances: 30
+    time_limit: 90
+    workers: 6
+    base_seed: 2000
+
+  # --- exact-solver scalability (solve time & proven-optimal fraction) ------
+  - study: scalability_exact
+    sizes: [20, 40, 60, 80, 100, 150, 200]
+    Ts: [20]
+    dep_densities: [0.4]
+    budget_tightnesses: [0.6]
+    deadline_pressures: [0.4]
+    t_crqcs: [13]
+    risk_forms: [step]
+    residual_factors: [0.1]
+    cluster_frac: 0.1
+    delayed_frac: 0.15
+    n_instances: 8
+    time_limit: 90
+    workers: 6
+    base_seed: 3000
+
+  # --- sensitivity: risk model & CRQC timing -------------------------------
+  - study: sensitivity
+    sizes: [45]
+    Ts: [20]
+    dep_densities: [0.4]
+    budget_tightnesses: [0.6]
+    deadline_pressures: [0.4]
+    t_crqcs: [9, 13, 17]
+    risk_forms: [step, linear]
+    residual_factors: [0.0, 0.1, 0.25]
+    cluster_frac: 0.1
+    delayed_frac: 0.15
+    n_instances: 20
+    time_limit: 60
+    workers: 6
+    base_seed: 4000

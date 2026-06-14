@@ -1,0 +1,26 @@
+# HNDL risk model — pre-registered (config of record). Mirrors pqcsched.risk.RiskModel.
+#
+# Residual risk r_{i,t} of leaving asset i unmigrated in period (year) t.
+# Harvest-now-decrypt-later (HNDL): data encrypted at year t is sensitive through
+# t + shelf_life; if that window reaches the projected CRQC year t_crqc, the asset
+# is fully at risk in year t; otherwise it carries a small residual. Weights are
+# integers so the CP-SAT objective and the shared scorer agree exactly.
+
+form: step                     # default; "linear" available for sensitivity analysis
+residual_factor: 0.1           # residual fraction of criticality when not HNDL-at-risk
+residual_scale: 1000           # fixed-point scale (keeps residual exactly integral)
+
+semantics:
+  weight_at_risk: criticality                       # if t + shelf_life >= t_crqc
+  weight_residual: round(criticality * residual_factor)
+  objective: "R = sum_i sum_{t < tau_i} r_{i,t}"    # risk accrues strictly before migration
+  note: >
+    The objective is well-defined even when a (greedy) schedule leaves a mandated
+    asset unmigrated — it simply keeps accruing risk — so deadline misses are
+    penalized naturally with no arbitrary big-M. Deadline-violation rate is also
+    reported separately.
+
+sensitivity:                   # RQ: how conclusions shift with the risk model
+  forms: [step, linear]
+  residual_factors: [0.0, 0.1, 0.25]
+  t_crqc_years: [9, 13, 17]    # 2035 / 2039 / 2043

@@ -40,15 +40,21 @@ class Calibration:
     crit_log_sigma: float = 0.8
     crit_min: int = 1
     crit_max: int = 100
-    # Migration effort (person-days), lognormal, clipped.
-    cost_log_mean: float = 1.6
-    cost_log_sigma: float = 0.7
+    # Migration effort (NORMALIZED units — relative effort, not absolute days).
+    # Spread is moderate on purpose: the per-period budget floor is the largest
+    # single cost, so a heavy cost tail would force a loose budget at small sizes
+    # and make `budget_tightness` unreachable. A moderate spread keeps the budget
+    # axis genuinely controllable. Applied symmetrically to optimal and greedy.
+    cost_log_mean: float = 1.4
+    cost_log_sigma: float = 0.5
     cost_min: int = 1
-    cost_max: int = 40
-    # Shelf-life (HNDL horizon, in periods): transient / medium / long-lived.
-    # Probabilities reflect a mixed estate (ephemeral TLS sessions vs long-lived
-    # signed/records data). Calibrated qualitatively from HNDL literature.
-    shelf_life_tiers: tuple = ((2, 0.40), (8, 0.40), (20, 0.20))
+    cost_max: int = 14
+    # Shelf-life (HNDL horizon, in YEARS — one period == one year; see PROGRESS.md
+    # "period semantics"): transient / medium / long-lived. Probabilities reflect a
+    # mixed estate (ephemeral TLS sessions ~3y, business data ~10y, long-lived
+    # signed/health/government records ~25y). With a CRQC ~2039 and horizon to
+    # 2045, the long tier reaches the CRQC window so HNDL risk fires meaningfully.
+    shelf_life_tiers: tuple = ((3, 0.40), (10, 0.40), (25, 0.20))
     # PQC/hybrid performance penalty (handshake/bandwidth overhead), in [0,1].
     perf_min: float = 0.0
     perf_max: float = 0.6
@@ -59,14 +65,15 @@ CALIB = Calibration()
 
 @dataclass
 class GenParams:
+    # One period == one year; horizon T=20 covers 2026..2045 (see PROGRESS.md).
     size: int = 200
-    T: int = 40
+    T: int = 20
     dep_density: float = 0.3        # 0..1 ; controls expected in-degree
     budget_tightness: float = 0.6   # (0,1] ; higher == less capacity == harder
     deadline_pressure: float = 0.3  # 0..1 ; more mandates + earlier deadlines
     cluster_frac: float = 0.10      # fraction of assets placed in co-migration pairs
     delayed_frac: float = 0.15      # fraction with earliest > 0 (late PQC support)
-    t_crqc: int = 28                # projected CRQC period (sensitivity-tested)
+    t_crqc: int = 13                # projected CRQC year-index (~2039; sensitivity-tested)
     max_in_degree: int = 4          # cap dependency in-degree (realistic, keeps DAG sane)
     seed: int = 0
     calib: Calibration = field(default_factory=lambda: CALIB)

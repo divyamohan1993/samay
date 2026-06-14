@@ -1,0 +1,65 @@
+# Synthetic-estate generator — pre-registered distributions (config of record).
+#
+# These mirror pqcsched.generate.Calibration / GenParams defaults. They are
+# PRE-REGISTERED: written before the study is run, and NOT tuned afterwards to
+# flatter the optimizer. Calibration sources are in research/calibration-crypto.md
+# and recorded in PROGRESS.md. One period == one YEAR (t=0 == 2026).
+#
+# Cost is in NORMALIZED effort units (relative), not absolute person-days: what
+# matters for scheduling difficulty is the cost-to-budget ratio. The spread is
+# kept moderate so the per-period budget (floored at the largest single cost so
+# every asset fits somewhere) can still be made genuinely tight.
+
+period_semantics:
+  unit: year
+  t0_calendar: 2026
+  default_horizon_T: 20        # covers 2026..2045
+  rationale: >
+    A multi-year migration roadmap is naturally annual; annual periods keep the
+    time-indexed MILP tractable (variables = assets x T) while spanning the CRQC
+    window and policy deadlines (CNSA 2.0 2030/2033; NIST disfavour-2030/
+    disallow-2035; India NQM CII-2029/enterprise-2033).
+
+criticality:                   # exposure/impact "risk points" (heavy-tailed)
+  distribution: lognormal
+  log_mean: 3.0
+  log_sigma: 0.8
+  clip: [1, 100]
+  rationale: most assets moderate; a few internet-facing crown jewels dominate risk.
+
+cost:                          # normalized migration effort
+  distribution: lognormal
+  log_mean: 1.4
+  log_sigma: 0.5
+  clip: [1, 14]
+
+shelf_life:                    # HNDL horizon, in YEARS
+  tiers_years: [[3, 0.40], [10, 0.40], [25, 0.20]]
+  rationale: ephemeral TLS (~3y) / business data (~10y) / long-lived records (~25y).
+
+perf_penalty:                  # PQC/hybrid overhead in [0,1] (signatures dominate)
+  distribution: uniform
+  range: [0.0, 0.6]
+  note: only used by the optional coexistence-budget constraint (edge case study).
+
+earliest:                      # late PQC availability for a fraction of assets
+  delayed_frac: 0.15
+  delayed_period_range: [1, "T//4"]
+
+dependencies:                  # acyclic precedence (edges forward in a topo order)
+  expected_in_degree: dep_density * max_in_degree
+  max_in_degree: 4
+  rationale: CA -> intermediate -> leaf; client/server; chain depth ~2-3 (TLS scans).
+
+clusters:                      # co-migration pairs (both ends of a protocol)
+  cluster_frac: 0.10
+
+budget:
+  model: uniform per period
+  capacity_total: ceil(total_cost / budget_tightness)   # tightness in (0,1], higher==tighter
+  per_period: max(ceil(capacity_total / T), max_single_cost)   # floor: every asset must fit
+  reports: realized_tightness = total_cost / (T * per_period)
+
+t_crqc:
+  central: 13                  # ~2039 (GRI/Mosca central-ish)
+  sensitivity: [9, 13, 17]     # 2035 / 2039 / 2043 (RQ5b)
