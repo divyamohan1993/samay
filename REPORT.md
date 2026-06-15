@@ -256,21 +256,23 @@ constrained.**
 - **Budget tightness:** gap *largest at loose budgets* — tight 0.4 → 74.5% median,
   tight 0.95 → 48.8%.
 - **Dependency density** (size 30, where the dense-precedence cells are exactly
-  solvable; `runs/dep_sweep.csv`): **dep 0.1 → 76%, dep 0.4 → 43%, dep 0.7 → 11%**
-  median highest-risk gap (the HNDL-aware greedy tracks it: 62% / 46% / 12%).
+  solvable; `runs/dep_sweep.csv`): the gap **decreases markedly with density —
+  dep 0.1 ≈ 76%, dep 0.4 ≈ 43%, dep 0.7 ≈ 11%** median highest-risk gap (the
+  HNDL-aware greedy tracks it). *Read this as directional:* the dense cells are a
+  smaller proven-optimal sample (n≈6–17, on the OPTIMAL-survivor subset, at the
+  smaller size 30 since dep 0.7 at the headline size 45 sits beyond CP-SAT's exact
+  frontier — §10). The budget-tightness axis above is the robust leg (515
+  instances); the dependency leg is a clear trend rather than a precise law.
 
-Both axes say the same thing: **optimization pays most where there is the most
+Both axes point the same way: **optimization pays most where there is the most
 scheduling freedom.** Ample budget and sparse dependencies give greedy room to
 mis-time migrations (squandering early capacity on not-yet-risky assets); tight
 budgets and dense precedence remove that freedom, forcing greedy and optimal into
-similar orders. So the naive intuition ("optimization matters most when
-resources are scarce") is *backwards* here — a genuinely useful finding for
-practitioners deciding when an exact solver is worth it: it is worth the most for
-*loosely-constrained, sparsely-dependent* estates. (The dense dep 0.7 cells at the
-headline size 45 sit at/beyond CP-SAT's exact frontier — see §10 — so the
-dependency-density result is reported at size 30 where proven optima are
-available.) Regime heatmaps: `artifacts/fig_gap_highest_risk_tight_press.png`,
-`artifacts/fig_gap_dens_tight.png`.
+similar orders. So the naive intuition ("optimization matters most when resources
+are scarce") looks *backwards* here — a genuinely useful steer for practitioners
+deciding when an exact solver is worth it: most for *loosely-constrained,
+sparsely-dependent* estates. Regime heatmaps:
+`artifacts/fig_gap_highest_risk_tight_press.png`, `artifacts/fig_gap_dens_tight.png`.
 
 **9.2 It is not merely a naive sort — the combinatorial structure matters.** We
 add a *stronger* HNDL-aware greedy that, at each period, migrates the asset with

@@ -21,8 +21,9 @@ tested* — this is **not** a "greedy suffices" result:
   pressure) to **25%** (high pressure) — three-quarters of greedy roadmaps miss a
   regulatory mandate.
 - **The gap tracks scheduling FREEDOM** (counter-intuitive but coherent): it is
-  *largest where the problem is least constrained*. By budget tightness: 74% at
-  0.4 → 49% at 0.95. By dependency density (size 30, solvable): **76% (dep 0.1) →
+  *largest where the problem is least constrained*. By budget tightness (robust,
+  515 instances): 74% at 0.4 → 49% at 0.95. By dependency density (size 30,
+  directional — smaller proven-optimal sample at high density): **76% (dep 0.1) →
   43% (0.4) → 11% (0.7)**. Loose budgets + sparse deps give greedy room to
   mis-time; tight/dense constraints force greedy and optimal together. Practical
   takeaway: an exact solver pays most for *loosely-constrained, sparsely-dependent*
