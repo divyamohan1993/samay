@@ -3,275 +3,335 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>SAMAY — your provably optimal quantum-safe migration roadmap</title>
-<meta name="description" content="Upload your cryptographic inventory (a CBOM) and get a provably optimal, dependency-safe, deadline-compliant quarter-by-quarter post-quantum migration roadmap. See exactly which regulatory mandates the usual 'highest-risk-first' approach would miss." />
+<title>SAMAY — Post-Quantum Migration Planner</title>
+<meta name="description" content="Upload your cryptographic inventory (CBOM) and get a provably optimal, dependency-safe, deadline-compliant post-quantum migration roadmap. Quarter by quarter, defensible to an auditor." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231456d6'/%3E%3Cpath d='M16 6a10 10 0 1 0 10 10h-2a8 8 0 1 1-8-8z' fill='white'/%3E%3Crect x='15' y='9' width='2' height='8' rx='1' fill='white'/%3E%3C/svg%3E" />
 <style>
   :root{
-    --bg:#0b0f17; --panel:#121826; --panel2:#0e1422; --ink:#eef2f9; --mut:#93a0b6;
-    --acc:#57d1c2; --acc2:#7aa2ff; --bad:#ff6b6b; --good:#54d18a; --warn:#ffcc66; --line:#1e2940;
-    --cert:#7aa2ff; --key:#c08cff; --proto:#57d1c2; --algo:#8a97ad;
+    --bg:#f4f6fb; --surface:#ffffff; --ink:#0f1b2d; --ink2:#41506a; --mut:#7a8aa3;
+    --line:#e2e8f2; --line2:#eef2f8; --brand:#1456d6; --brand-dk:#0e3fa3; --brand-soft:#e8f0ff;
+    --good:#0a7d3c; --good-soft:#e6f5ec; --bad:#c62828; --bad-soft:#fdeaea; --warn:#9a6700; --warn-soft:#fdf3e2;
+    --cert:#2563eb; --key:#7c3aed; --proto:#0e9488; --algo:#64748b;
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial}
-  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
-  a{color:var(--acc2);text-decoration:none}a:hover{text-decoration:underline}
-  .eyebrow{letter-spacing:.18em;text-transform:uppercase;font-size:12px;color:var(--acc);font-weight:700}
-  :focus-visible{outline:2px solid var(--acc2);outline-offset:2px;border-radius:6px}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:16px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Roboto,Inter,Helvetica,Arial,sans-serif;
+       -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  a{color:var(--brand);text-decoration:none}a:hover{text-decoration:underline}
+  :focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
+  h1,h2,h3{letter-spacing:-.015em}
 
-  .hero{background:radial-gradient(900px 500px at 75% -15%,#16243f 0,var(--bg) 60%);border-bottom:1px solid var(--line)}
-  .hero .wrap{padding:60px 20px 50px}
-  .brand{display:flex;align-items:baseline;gap:12px;margin-bottom:26px}
-  .brand .sam{font-weight:800;font-size:22px;background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .brand .tag{color:var(--mut);font-size:13px}
-  h1{font-size:clamp(28px,4.6vw,48px);line-height:1.1;margin:.2em 0;letter-spacing:-.02em;font-weight:800}
-  h1 .hl{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .sub{font-size:clamp(16px,2vw,19px);color:#c7d0df;max-width:760px;margin:16px 0 26px}
-  .sub b{color:var(--ink)}
-  .ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
-  .cta{display:inline-flex;align-items:center;gap:9px;padding:14px 24px;border:0;border-radius:12px;font-weight:800;font-size:16px;cursor:pointer;color:#04121a;background:linear-gradient(90deg,var(--acc),var(--acc2));box-shadow:0 10px 30px rgba(87,209,194,.22)}
-  .cta:hover{filter:brightness(1.06)}
-  .cta.sec{background:none;color:var(--acc2);box-shadow:none}
+  /* header */
+  header.nav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.86);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .nav .wrap{display:flex;align-items:center;justify-content:space-between;height:62px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--ink);font-size:18px}
+  .logo .mark{width:30px;height:30px;border-radius:8px;background:var(--brand);display:grid;place-items:center;color:#fff;font-size:15px;font-weight:700}
+  .logo small{color:var(--mut);font-weight:600;font-size:12px;letter-spacing:.04em}
+  .navlinks{display:flex;align-items:center;gap:22px;font-size:14.5px;color:var(--ink2);font-weight:600}
+  .navlinks a{color:var(--ink2)}
+  .btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;padding:9px 16px;font-weight:700;font-size:14.5px;cursor:pointer;background:var(--surface);color:var(--ink)}
+  .btn:hover{border-color:var(--brand);color:var(--brand)}
+  .btn.pri{background:var(--brand);border-color:var(--brand);color:#fff}
+  .btn.pri:hover{background:var(--brand-dk);border-color:var(--brand-dk);color:#fff;text-decoration:none}
 
-  section{padding:52px 0;border-bottom:1px solid var(--line)}
-  h2{font-size:clamp(22px,3vw,30px);margin:0 0 6px;letter-spacing:-.01em}
-  .lede{color:var(--mut);max-width:740px;margin:0 0 26px}
-  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
-  .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;padding:20px}
-  .card h3{margin:.1em 0 .4em;font-size:17px}.card p{margin:0;color:var(--mut);font-size:14.5px}
-  .ico{font-size:22px}
+  /* hero */
+  .hero{border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff, #f4f6fb)}
+  .hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:center;padding:64px 24px}
+  @media(max-width:880px){.hero .wrap{grid-template-columns:1fr;gap:30px;padding:44px 24px}}
+  .eyebrow{display:inline-block;font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);background:var(--brand-soft);padding:5px 11px;border-radius:999px}
+  h1{font-size:clamp(30px,4.4vw,46px);line-height:1.12;margin:18px 0 14px;font-weight:800}
+  .hero p.sub{font-size:clamp(16px,1.7vw,18.5px);color:var(--ink2);margin:0 0 26px;max-width:560px}
+  .hero .ctas{display:flex;gap:12px;flex-wrap:wrap}
+  .trust{margin-top:22px;color:var(--mut);font-size:13.5px}
+  /* hero panel preview */
+  .preview{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 40px rgba(15,27,45,.07);overflow:hidden}
+  .preview .ph{padding:13px 16px;border-bottom:1px solid var(--line2);display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--mut)}
+  .preview .ph b{color:var(--ink)}
+  .preview .pb{padding:14px 16px;display:flex;flex-direction:column;gap:9px}
+  .pl{display:flex;align-items:center;gap:11px;font-size:13.5px}
+  .pl .q{width:64px;color:var(--mut);font-variant-numeric:tabular-nums}
+  .pl .nm{flex:1;color:var(--ink);font-weight:600}
+  .pl .tag{font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--brand-soft);color:var(--brand)}
+  .pl .ok{font-size:11px;font-weight:700;color:var(--good)}
 
-  /* workflow steps */
-  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:8px}
-  .step{padding:18px;border:1px solid var(--line);border-radius:14px;background:var(--panel2)}
-  .step .n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#15203a;color:var(--acc);font-weight:800;font-size:13px;margin-bottom:8px}
-  .step b{display:block;margin-bottom:3px}.step span{color:var(--mut);font-size:14px}
+  /* sections */
+  section{padding:60px 0;border-bottom:1px solid var(--line)}
+  .sec-h{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand)}
+  h2{font-size:clamp(22px,3vw,30px);margin:6px 0 8px;font-weight:800}
+  .lede{color:var(--ink2);max-width:720px;margin:0 0 28px;font-size:17px}
+  .grid{display:grid;gap:18px}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .card h3{margin:0 0 6px;font-size:16.5px;font-weight:700}
+  .card p{margin:0;color:var(--ink2);font-size:14.5px}
+  .step .num{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--brand-soft);color:var(--brand);font-weight:800;margin-bottom:10px}
+  .ic{width:38px;height:38px;border-radius:10px;background:var(--brand-soft);display:grid;place-items:center;margin-bottom:12px}
+  .ic svg{width:20px;height:20px;stroke:var(--brand)}
 
   /* planner */
-  #plan{background:radial-gradient(800px 400px at 18% 0,#13202f 0,var(--bg) 60%)}
-  .sources{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 6px}
-  .src{padding:11px 16px;border:1px solid var(--line);border-radius:11px;background:var(--panel2);color:var(--ink);cursor:pointer;font-size:14.5px;font-weight:600}
-  .src[aria-pressed=true]{border-color:var(--acc);background:#10201f;color:var(--acc)}
-  .src:hover{border-color:var(--acc2)}
-  .cap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:18px 0 4px}
-  .cap label{font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
-  .cap input[type=range]{width:240px;accent-color:var(--acc);vertical-align:middle}
-  .cap .v{color:var(--acc);font-weight:700;font-variant-numeric:tabular-nums}
-  .hint{color:var(--mut);font-size:13px}
-  .verdict{margin:18px 0;padding:16px 18px;border-radius:14px;border:1px solid var(--line);background:#0e1626;font-size:15.5px}
-  .verdict.win{border-color:#2a4d49;background:#0f1a1c}
-  .verdict.miss{border-color:#5b2330;background:#1a1013}
-  .verdict b{color:var(--ink)} .verdict .miss-list{color:#ffb3bd;font-weight:600}
-  .vrow{display:flex;gap:10px;align-items:flex-start;margin:4px 0}
-  .vrow .em{font-size:18px;line-height:1.3}
+  #plan{background:var(--surface)}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 36px rgba(15,27,45,.06);overflow:hidden;margin-top:8px}
+  .panel-h{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg)}
+  .seg button{border:0;background:transparent;padding:10px 15px;font-size:14px;font-weight:700;color:var(--ink2);cursor:pointer;border-right:1px solid var(--line)}
+  .seg button:last-child{border-right:0}
+  .seg button[aria-pressed=true]{background:var(--brand);color:#fff}
+  .cap{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .cap label{font-size:12.5px;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.04em}
+  .cap input[type=range]{width:200px;accent-color:var(--brand)}
+  .cap .v{font-weight:800;color:var(--brand);font-variant-numeric:tabular-nums;min-width:22px;text-align:center}
+  .cap .hint{color:var(--mut);font-size:12.5px;flex-basis:100%}
 
-  /* timeline */
-  .tl{display:flex;flex-direction:column;gap:0;margin-top:8px}
-  .per{display:grid;grid-template-columns:108px 1fr;gap:14px;padding:12px 0;border-top:1px solid var(--line)}
-  .per .when{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;padding-top:3px}
-  .per .when small{display:block;color:var(--mut);font-weight:400;font-size:12px}
-  .chips{display:flex;flex-wrap:wrap;gap:8px}
-  .chip{display:inline-flex;align-items:center;gap:7px;padding:6px 11px;border-radius:10px;background:#0e1626;border:1px solid var(--line);font-size:13.5px}
-  .chip .dot{width:8px;height:8px;border-radius:50%}
-  .chip .why{color:var(--mut);font-size:12px}
-  .chip.late{border-color:#5b2330}
-  .flag{font-size:11px;padding:1px 6px;border-radius:6px;font-weight:700}
-  .flag.ok{color:var(--good)} .flag.late{color:var(--bad)}
-  .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--mut);font-size:12.5px;margin-top:14px}
-  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle}
-  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px}
-  .btn{padding:9px 15px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--ink);cursor:pointer;font-size:14px;font-weight:600}
-  .btn:hover{border-color:var(--acc2)}
-  .pill{display:inline-block;padding:2px 9px;border-radius:999px;background:#15203a;color:var(--acc2);font-size:12px;margin-left:8px}
-  .spin{display:none}.busy .spin{display:inline}
+  .summary{padding:20px 22px;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+  .summary.ok{background:var(--good-soft)} .summary.warn{background:var(--bad-soft)}
+  .summary .badge{flex:none;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-weight:800;color:#fff}
+  .summary.ok .badge{background:var(--good)} .summary.warn .badge{background:var(--bad)}
+  .summary .txt{font-size:15px;color:var(--ink)}
+  .summary .txt b{font-weight:700}
+  .summary .miss{color:var(--bad);font-weight:700}
+  .summary .sub{color:var(--ink2);font-size:14px;margin-top:3px}
 
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
-  .stat{padding:18px;border-radius:14px;border:1px solid var(--line);background:var(--panel2)}
-  .stat .n{font-size:30px;font-weight:800;color:var(--acc)}.stat .l{color:var(--mut);font-size:14px;margin-top:4px}
-  footer{padding:40px 0 70px;color:var(--mut);font-size:14px}
-  footer .wrap{display:flex;flex-wrap:wrap;gap:18px;justify-content:space-between;align-items:center}
-  .note{max-width:640px}
-  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 22px;border-bottom:1px solid var(--line);background:var(--bg)}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--ink2);font-size:12.5px;align-items:center}
+  .legend i{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:6px;vertical-align:middle}
+
+  table.road{width:100%;border-collapse:collapse}
+  table.road th{text-align:left;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--mut);font-weight:700;padding:11px 22px;background:var(--bg);border-bottom:1px solid var(--line)}
+  table.road td{padding:12px 22px;border-bottom:1px solid var(--line2);vertical-align:top;font-size:14.5px}
+  table.road tr:hover td{background:#fafbfe}
+  .qcell{font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .qcell small{display:block;color:var(--mut);font-weight:500;font-size:11.5px}
+  .asset{display:flex;align-items:center;gap:9px;margin:3px 0}
+  .asset .kindtag{flex:none;font-size:10.5px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;padding:2px 7px;border-radius:5px;color:#fff}
+  .asset .an{font-weight:600;color:var(--ink)}
+  .asset .why{color:var(--mut);font-size:12.5px}
+  .stat-badge{font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap}
+  .stat-badge.ok{color:var(--good);background:var(--good-soft)}
+  .stat-badge.late{color:var(--bad);background:var(--bad-soft)}
+  .stat-badge.none{color:var(--mut);background:var(--line2)}
+
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px}
+  .metric{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .metric .n{font-size:32px;font-weight:800;color:var(--brand);line-height:1}
+  .metric .l{color:var(--ink2);font-size:14px;margin-top:8px}
+
+  footer{padding:42px 0;background:var(--ink);color:#aebbd0}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center}
+  footer a{color:#cdd8ea}
+  footer .note{max-width:620px;font-size:13.5px}
+  .spin{display:none;font-size:13px;color:var(--mut);font-weight:600}
+  .busy .spin{display:inline}
+  .muted{color:var(--mut)}
 </style>
 </head>
 <body>
 
-<header class="hero"><div class="wrap">
-  <div class="brand"><span class="sam">समय · SAMAY</span><span class="tag">post-quantum migration planner</span></div>
-  <p class="eyebrow">The quantum clock is already running</p>
-  <h1>Quantum will break today's encryption.<br><span class="hl">Migrate everything — in the optimal order.</span></h1>
-  <p class="sub">Every certificate, key, and signature you run on RSA/ECC has to move to quantum-safe
-    crypto — <b>thousands of them</b>, in a dependency-safe order, before regulators' deadlines.
-    Upload your inventory and <b>SAMAY hands you the provably optimal migration roadmap</b> —
-    and shows exactly which mandates the usual “do-the-scariest-first” guess would miss.</p>
-  <div class="ctas">
-    <a class="cta" href="#plan">▶ Build a roadmap</a>
-    <a class="cta sec" href="#how">How it works →</a>
-  </div>
+<header class="nav"><div class="wrap">
+  <div class="logo"><span class="mark">S</span>SAMAY <small>· समय</small></div>
+  <nav class="navlinks">
+    <a href="#how">How it works</a>
+    <a href="#evidence">Evidence</a>
+    <a href="https://github.com/divyamohan1993/samay">GitHub</a>
+    <a class="btn pri" href="#plan">Open the planner</a>
+  </nav>
 </div></header>
 
-<!-- HOW IT WORKS (workflow, self-evident) -->
-<section id="how"><div class="wrap">
-  <p class="eyebrow">How an enterprise uses it</p>
-  <h2>From a crypto inventory to a defensible plan, in four steps.</h2>
-  <div class="steps">
-    <div class="step"><span class="n">1</span><b>Discover</b><span>Your existing scanner (IBM, Microsoft, SandboxAQ, wiz…) emits a <b>CBOM</b> — a list of every cryptographic asset.</span></div>
-    <div class="step"><span class="n">2</span><b>Upload</b><span>Drop that CBOM here. SAMAY reads the assets, their dependencies, and which are quantum-vulnerable.</span></div>
-    <div class="step"><span class="n">3</span><b>Plan</b><span>It computes the <b>provably optimal</b> quarter-by-quarter roadmap under your capacity and deadlines.</span></div>
-    <div class="step"><span class="n">4</span><b>Act</b><span>Hand the plan to your team. Defend it to an auditor — it's optimal and meets every mandate by construction.</span></div>
-  </div>
-</div></section>
-
-<!-- THE PLANNER (the product) -->
-<section id="plan"><div class="wrap">
-  <p class="eyebrow">Your migration roadmap</p>
-  <h2>Pick a sample estate, or upload your own CBOM. <span class="pill spin" id="spin">solving…</span></h2>
-  <p class="lede">We solve it to <b>proven optimality</b> on the server and compare it to the
-    “highest-risk-first” approach everyone uses today.</p>
-
-  <div class="sources" role="group" aria-label="Choose an estate">
-    <button class="src" id="src-enterprise" aria-pressed="true" onclick="pickSample('enterprise')">🏢 Sample: Enterprise</button>
-    <button class="src" id="src-india_dpi" aria-pressed="false" onclick="pickSample('india_dpi')">🇮🇳 Sample: India DPI</button>
-    <button class="src" id="src-upload" aria-pressed="false" onclick="document.getElementById('cbom').click()">⬆ Upload your CBOM (.json)</button>
-    <input id="cbom" type="file" accept=".json,application/json" style="display:none" aria-label="Upload a CycloneDX CBOM JSON file">
-  </div>
-
-  <div class="cap">
-    <label for="capacity">Migration capacity / quarter</label>
-    <input id="capacity" type="range" min="4" max="14" value="5" aria-describedby="caphint">
-    <span class="v" id="capv">5</span>
-    <span class="hint" id="caphint">how much your team can migrate each quarter — lower it and watch the naive approach miss mandates</span>
-  </div>
-
-  <div class="verdict" id="verdict" aria-live="polite">Loading a sample roadmap…</div>
-
-  <div class="toolbar">
-    <div class="legend">
-      <span><i style="background:var(--cert)"></i>certificate</span>
-      <span><i style="background:var(--key)"></i>key</span>
-      <span><i style="background:var(--proto)"></i>protocol</span>
-      <span><i style="background:var(--algo)"></i>algorithm</span>
-      <span>· each row = a quarter; ⚠ = misses its deadline</span>
+<!-- HERO -->
+<section class="hero" style="border-bottom:1px solid var(--line)"><div class="wrap">
+  <div>
+    <span class="eyebrow">Post-quantum migration planning</span>
+    <h1>Plan your quantum-safe migration — provably optimal.</h1>
+    <p class="sub">Quantum computers will break the RSA/ECC encryption protecting your systems.
+      Migrating every certificate, key, and signature is mandatory and on a regulatory deadline.
+      SAMAY ingests your cryptographic inventory and computes the <b>provably optimal</b>,
+      dependency-safe, deadline-compliant migration roadmap — quarter by quarter.</p>
+    <div class="ctas">
+      <a class="btn pri" href="#plan">Build a roadmap →</a>
+      <a class="btn" href="#how">How it works</a>
     </div>
-    <button class="btn" id="dl" onclick="downloadCSV()">⬇ Download plan (CSV)</button>
+    <p class="trust">Open-source · CycloneDX CBOM input · aligned to NIST IR 8547 &amp; CNSA 2.0 timelines</p>
   </div>
-  <div class="tl" id="timeline"></div>
+  <div class="preview" aria-hidden="true">
+    <div class="ph"><b>Migration roadmap</b><span>provably optimal</span></div>
+    <div class="pb">
+      <div class="pl"><span class="q">2026 Q3</span><span class="nm">Enterprise Root CA</span><span class="tag">unblocks 2</span></div>
+      <div class="pl"><span class="q">2027 Q1</span><span class="nm">HSM master key-wrap</span><span class="ok">✓ on time</span></div>
+      <div class="pl"><span class="q">2027 Q3</span><span class="nm">Issuing CA</span><span class="tag">unblocks 10</span></div>
+      <div class="pl"><span class="q">2028 Q2</span><span class="nm">Public API gateway TLS</span><span class="ok">✓ on time</span></div>
+      <div class="pl"><span class="q">2029 Q1</span><span class="nm">Email S/MIME signing</span><span class="ok">✓ on time</span></div>
+    </div>
+  </div>
 </div></section>
 
-<!-- PROOF -->
-<section id="proof"><div class="wrap">
-  <p class="eyebrow">The honest finding</p>
-  <h2>We tested whether optimal really beats the guess. It does.</h2>
-  <p class="lede">Across 515 cases solved to proven optimality (the full reproducible study is in the repo):</p>
-  <div class="stats">
-    <div class="stat"><div class="n">~56%</div><div class="l">less residual risk than “highest-risk-first”, median</div></div>
-    <div class="stat"><div class="n">25–42%</div><div class="l">of the time the usual guess <b>misses a regulatory deadline</b></div></div>
-    <div class="stat"><div class="n">3 of 5</div><div class="l">greedy heuristics go infeasible on a real India-DPI estate; the optimum meets all 18 mandates</div></div>
+<!-- HOW IT WORKS -->
+<section id="how"><div class="wrap">
+  <p class="sec-h">How it works</p>
+  <h2>From a crypto inventory to a defensible plan — in four steps.</h2>
+  <div class="grid g4" style="margin-top:20px">
+    <div class="card step"><span class="num">1</span><h3>Discover</h3><p>Your scanner (IBM, Microsoft, SandboxAQ, Wiz…) emits a <b>CBOM</b> — an inventory of every cryptographic asset.</p></div>
+    <div class="card step"><span class="num">2</span><h3>Upload</h3><p>Provide that CBOM. SAMAY reads the assets, their dependencies, and which are quantum-vulnerable.</p></div>
+    <div class="card step"><span class="num">3</span><h3>Plan</h3><p>It computes the <b>provably optimal</b> quarter-by-quarter roadmap under your capacity and deadlines.</p></div>
+    <div class="card step"><span class="num">4</span><h3>Act</h3><p>Export the plan, brief your team, and defend it to an auditor — it is optimal and meets every mandate by construction.</p></div>
   </div>
-  <p class="lede" style="margin-top:20px">The transferable lesson is <b>feasibility</b>: the everyday
+</div></section>
+
+<!-- THE PLANNER -->
+<section id="plan"><div class="wrap">
+  <p class="sec-h">The planner</p>
+  <h2>Build a migration roadmap <span class="spin" id="spin">· computing…</span></h2>
+  <p class="lede">Choose a sample estate or upload your own CBOM. SAMAY solves it to proven optimality
+    and contrasts it with the “highest-risk-first” approach most teams use today.</p>
+
+  <div class="panel">
+    <div class="panel-h">
+      <div class="seg" role="group" aria-label="Choose an estate">
+        <button id="src-enterprise" aria-pressed="true" onclick="pickSample('enterprise')">Enterprise</button>
+        <button id="src-india_dpi" aria-pressed="false" onclick="pickSample('india_dpi')">India DPI</button>
+        <button id="src-upload" aria-pressed="false" onclick="document.getElementById('cbom').click()">Upload CBOM…</button>
+        <input id="cbom" type="file" accept=".json,application/json" style="display:none" aria-label="Upload a CycloneDX CBOM JSON file">
+      </div>
+      <div class="cap">
+        <label for="capacity">Capacity / quarter</label>
+        <input id="capacity" type="range" min="4" max="14" value="5" aria-describedby="caphint">
+        <span class="v" id="capv">5</span>
+        <span class="hint" id="caphint">how much your team can migrate each quarter — lower it to see the naive approach miss mandates</span>
+      </div>
+    </div>
+
+    <div class="summary ok" id="summary" aria-live="polite">
+      <div class="badge" id="sbadge">…</div>
+      <div class="txt" id="stext">Loading a sample roadmap…</div>
+    </div>
+
+    <div class="toolbar">
+      <div class="legend">
+        <span><i style="background:var(--cert)"></i>certificate</span>
+        <span><i style="background:var(--key)"></i>key</span>
+        <span><i style="background:var(--proto)"></i>protocol</span>
+        <span><i style="background:var(--algo)"></i>algorithm</span>
+      </div>
+      <button class="btn" id="dl" onclick="downloadCSV()">↓ Download plan (CSV)</button>
+    </div>
+
+    <table class="road">
+      <thead><tr><th style="width:120px">Quarter</th><th>Assets to migrate · why · deadline status</th></tr></thead>
+      <tbody id="timeline"></tbody>
+    </table>
+  </div>
+</div></section>
+
+<!-- EVIDENCE -->
+<section id="evidence" style="background:var(--bg)"><div class="wrap">
+  <p class="sec-h">The evidence</p>
+  <h2>Optimal scheduling measurably beats the guess.</h2>
+  <p class="lede">Across 515 cases solved to proven optimality (the full reproducible study is in the repository):</p>
+  <div class="metrics">
+    <div class="metric"><div class="n">~56%</div><div class="l">less residual risk than “highest-risk-first”, median</div></div>
+    <div class="metric"><div class="n">25–42%</div><div class="l">of the time the usual guess misses a regulatory deadline</div></div>
+    <div class="metric"><div class="n">3 of 5</div><div class="l">greedy heuristics go infeasible on a real India-DPI estate; the optimum meets all 18 mandates</div></div>
+  </div>
+  <p class="lede" style="margin-top:22px">The transferable result is <b>feasibility</b>: the everyday
     approach quietly produces roadmaps that miss mandates. The exact risk reduction depends on your
-    estate — which is why SAMAY computes it for <i>yours</i>.</p>
+    estate — so SAMAY computes it for yours.</p>
 </div></section>
 
-<section id="who"><div class="wrap">
-  <p class="eyebrow">Who it's for</p>
+<!-- WHO -->
+<section><div class="wrap">
+  <p class="sec-h">Built for</p>
   <h2>The people who own the quantum-safe transition.</h2>
-  <p class="lede">CISOs, security architects, and PQC-migration leads at banks, governments, and large
-    enterprises — anyone who has to <b>defend a migration plan to an auditor or a board</b>.</p>
-  <a class="cta" href="#plan">▶ Build your roadmap</a>
+  <p class="lede">CISOs, security architects, and PQC-migration program leads at banks, government
+    agencies, and large enterprises — anyone who must defend a migration plan to an auditor or a board.</p>
+  <a class="btn pri" href="#plan">Build your roadmap →</a>
 </div></section>
 
 <footer><div class="wrap">
-  <div class="note"><b>SAMAY · pqcsched</b> — an open-source <b>research reference tool</b> (not a
-    commercial product) and an honest study of when optimal scheduling beats greedy. CPU-only.
-    Apache-2.0. The hosted demo caps estate size and solver time.</div>
+  <div class="note"><b>SAMAY · pqcsched</b> — an open-source research reference tool (not a commercial
+    product) and an honest study of when optimal scheduling beats greedy. CPU-only. Apache-2.0. The
+    hosted demo caps estate size and solver time.</div>
   <div>
-    <a href="https://github.com/divyamohan1993/samay">GitHub ↗</a> ·
-    <a href="https://github.com/divyamohan1993/samay/blob/main/REPORT.md">The study ↗</a>
-    <span id="ver" class="hint"></span>
+    <a href="https://github.com/divyamohan1993/samay">GitHub</a> ·
+    <a href="https://github.com/divyamohan1993/samay/blob/main/REPORT.md">The study</a>
+    <span id="ver" class="muted" style="font-size:12.5px"></span>
   </div>
 </div></footer>
 
 <script>
 const $=id=>document.getElementById(id);
 const KIND={certificate:"var(--cert)",key:"var(--key)",protocol:"var(--proto)",algorithm:"var(--algo)"};
-let SOURCE={sample:"enterprise"};      // {sample} or {cbom:<obj>}
-let LAST=null;                          // last roadmap for CSV
+let SOURCE={sample:"enterprise"}, LAST=null;
 
 $("capacity").addEventListener("input",()=>{$("capv").textContent=$("capacity").value; clearTimeout(window._t); window._t=setTimeout(()=>replan(false),250);});
-
-function pickSample(id){
-  SOURCE={sample:id};
-  for(const s of ["enterprise","india_dpi","upload"]) $("src-"+s).setAttribute("aria-pressed", String(s===id));
+function pickSample(id){ SOURCE={sample:id};
+  for(const s of ["enterprise","india_dpi","upload"]) $("src-"+s).setAttribute("aria-pressed",String(s===id));
   replan(true);
 }
 $("cbom").addEventListener("change",async ev=>{
   const f=ev.target.files[0]; if(!f) return;
   try{ const obj=JSON.parse(await f.text()); SOURCE={cbom:obj};
-    for(const s of ["enterprise","india_dpi","upload"]) $("src-"+s).setAttribute("aria-pressed", String(s==="upload"));
+    for(const s of ["enterprise","india_dpi","upload"]) $("src-"+s).setAttribute("aria-pressed",String(s==="upload"));
     replan(true);
-  }catch(e){ verdict("miss","❌ That file isn't valid JSON. Export a CycloneDX <b>CBOM</b> (.json) from your scanner and try again."); }
+  }catch(e){ summary("warn","!","That file isn't valid JSON. Export a CycloneDX <b>CBOM</b> (.json) from your scanner and try again."); }
 });
 
-function verdict(cls,html){ const v=$("verdict"); v.className="verdict "+cls; v.innerHTML=html; }
-
-async function replan(reset){
-  $("plan").classList.add("busy");
-  const body=Object.assign({time_limit:8}, SOURCE);
-  if(!reset) body.capacity=+$("capacity").value;   // reset => use the estate's natural (feasible) capacity
-  try{
-    const r=await (await fetch("/plan",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)})).json();
-    render(r, reset);
-  }catch(e){ verdict("miss","Something went wrong: "+e); }
-  finally{ $("plan").classList.remove("busy"); }
+function summary(cls,badge,html,sub){
+  $("summary").className="summary "+(cls==="warn"?"warn":"ok");
+  $("sbadge").textContent=badge;
+  $("stext").innerHTML=html+(sub?`<div class="sub">${sub}</div>`:"");
 }
 
-function render(r, reset){
-  if(r.error || !r.roadmap){ verdict("miss","⚠ "+(r.error||("Couldn't plan this estate ("+(r.status||"error")+").")) ); $("timeline").innerHTML=""; LAST=null; return; }
+async function replan(reset){
+  document.querySelector("#plan").classList.add("busy");
+  const body=Object.assign({time_limit:8},SOURCE);
+  if(!reset) body.capacity=+$("capacity").value;
+  try{
+    const r=await (await fetch("/plan",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)})).json();
+    render(r,reset);
+  }catch(e){ summary("warn","!","Couldn't reach the planner. "+e); }
+  finally{ document.querySelector("#plan").classList.remove("busy"); }
+}
+
+function render(r,reset){
+  if(r.error || !r.roadmap){ summary("warn","!", r.error||("Couldn't plan this estate ("+(r.status||"error")+").")); $("timeline").innerHTML=""; LAST=null; return; }
   LAST=r; const rm=r.roadmap, s=rm.summary, n=r.naive, est=r.estate;
-  if(reset && est && est.capacity_per_period){       // land each estate at its natural feasible capacity
-    const cap=est.capacity_per_period, sl=$("capacity");
-    if(cap>+sl.max) sl.max=cap+5; if(cap<+sl.min) sl.min=Math.max(1,cap-1);
-    sl.value=cap; $("capv").textContent=cap;
-  }
-  // verdict
-  let html=`<div class="vrow"><span class="em">✅</span><div><b>${est.title}</b> — ${est.n_assets} crypto assets, ${est.n_mandated} under a regulatory mandate.
-    SAMAY's <b>provably optimal</b> plan migrates everything by <b>${s.last_period}</b> and <b>meets all ${s.n_mandated} mandates</b>${r.proven_optimal?"":" (best found in the time limit)"}.</div></div>`;
+  if(reset && est && est.capacity_per_period){ const cap=est.capacity_per_period, sl=$("capacity");
+    if(cap>+sl.max) sl.max=cap+5; if(cap<+sl.min) sl.min=Math.max(1,cap-1); sl.value=cap; $("capv").textContent=cap; }
+  // summary
+  let head=`<b>${est.title}</b> — ${est.n_assets} crypto assets, ${est.n_mandated} under a regulatory mandate. The provably optimal plan migrates everything by <b>${s.last_period}</b> and meets <b>all ${s.n_mandated} mandates</b>${r.proven_optimal?"":" (best found in the time limit)"}.`;
+  let sub="";
   if(n){
-    if(n.feasible===false && n.n_missed>0){
-      html+=`<div class="vrow"><span class="em">❌</span><div>The usual <b>“highest-risk-first”</b> approach <b>misses ${n.n_missed} mandate${n.n_missed!==1?"s":""}</b> here:
-        <span class="miss-list">${n.missed_mandates.join(", ")}</span>. That's a compliance failure SAMAY avoids.</div></div>`;
-    } else if(n.extra_risk_vs_optimal!=null && n.extra_risk_vs_optimal>0.01){
-      html+=`<div class="vrow"><span class="em">➖</span><div>The usual <b>“highest-risk-first”</b> approach meets the deadlines here too, but leaves <b>${(n.extra_risk_vs_optimal*100).toFixed(0)}% more data at risk</b> over time — same assets, worse order.</div></div>`;
-    } else {
-      html+=`<div class="vrow"><span class="em">➖</span><div>At this capacity the usual approach also fits — good. Lower the capacity to see where it breaks.</div></div>`;
-    }
+    if(n.feasible===false && n.n_missed>0)
+      sub=`The usual “highest-risk-first” approach <span class="miss">misses ${n.n_missed} mandate${n.n_missed!==1?"s":""}</span>: ${n.missed_mandates.join(", ")}.`;
+    else if(n.extra_risk_vs_optimal!=null && n.extra_risk_vs_optimal>0.01)
+      sub=`The usual “highest-risk-first” approach meets the deadlines here but leaves <b>${(n.extra_risk_vs_optimal*100).toFixed(0)}% more data at risk</b> over time.`;
+    else sub=`At this capacity the usual approach also fits — lower the capacity to find where it breaks.`;
   }
-  verdict(n && n.feasible===false ? "miss":"win", html);
-  // timeline
+  summary(n&&n.feasible===false?"warn":"ok", n&&n.feasible===false?"!":"✓", head, sub);
+  // timeline table
   $("timeline").innerHTML = rm.timeline.map(p=>{
-    const chips=p.assets.map(a=>{
+    const assets=p.assets.map(a=>{
       const c=KIND[a.kind]||"var(--algo)";
-      const late=!a.on_time;
-      const flag=a.deadline_label?(late?`<span class="flag late">⚠ due ${a.deadline_label}</span>`:`<span class="flag ok">✓ by ${a.deadline_label}</span>`):"";
-      return `<span class="chip ${late?'late':''}"><span class="dot" style="background:${c}"></span>${a.label} <span class="why">· ${a.reason}</span> ${flag}</span>`;
+      const b=a.deadline_label?(a.on_time?`<span class="stat-badge ok">✓ by ${a.deadline_label}</span>`:`<span class="stat-badge late">⚠ due ${a.deadline_label}</span>`):`<span class="stat-badge none">no deadline</span>`;
+      return `<div class="asset"><span class="kindtag" style="background:${c}">${a.kind.slice(0,4)}</span><span class="an">${a.label}</span><span class="why">— ${a.reason}</span> ${b}</div>`;
     }).join("");
-    return `<div class="per"><div class="when">${p.period_label}<small>${p.assets.length} asset${p.assets.length!==1?"s":""}</small></div><div class="chips">${chips}</div></div>`;
+    return `<tr><td class="qcell">${p.period_label}<small>${p.assets.length} asset${p.assets.length!==1?"s":""}</small></td><td>${assets}</td></tr>`;
   }).join("");
 }
 
 function downloadCSV(){
-  if(!LAST){return;}
+  if(!LAST) return;
   const rows=[["quarter","asset","kind","criticality","deadline","on_time","why"]];
   for(const p of LAST.roadmap.timeline) for(const a of p.assets)
-    rows.push([p.period_label,a.label,a.kind,a.criticality,a.deadline_label||"",a.on_time,'"'+a.reason+'"']);
-  const csv=rows.map(r=>r.join(",")).join("\n");
-  const blob=new Blob([csv],{type:"text/csv"}), url=URL.createObjectURL(blob);
+    rows.push([p.period_label,'"'+a.label+'"',a.kind,a.criticality,a.deadline_label||"",a.on_time,'"'+a.reason+'"']);
+  const blob=new Blob([rows.map(r=>r.join(",")).join("\n")],{type:"text/csv"}), url=URL.createObjectURL(blob);
   const link=document.createElement("a"); link.href=url; link.download="pqc-migration-roadmap.csv"; link.click(); URL.revokeObjectURL(url);
 }
 
 fetch("/health").then(r=>r.json()).then(j=>$("ver").textContent=" · v"+j.version).catch(()=>{});
-replan(true);   // land on the enterprise sample roadmap at its natural capacity
+replan(true);
 </script>
 </body>
 </html>

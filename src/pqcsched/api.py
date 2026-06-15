@@ -381,6 +381,22 @@ def plan(req: PlanRequest):
     return out
 
 
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    icon = ("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>"
+            "<rect width='32' height='32' rx='7' fill='#1456d6'/>"
+            "<path d='M16 6a10 10 0 1 0 10 10h-2a8 8 0 1 1-8-8z' fill='white'/>"
+            "<rect x='15' y='9' width='2' height='8' rx='1' fill='white'/></svg>")
+    return Response(content=icon, media_type="image/svg+xml",
+                    headers={"Cache-Control": "public, max-age=86400"})
+
+
+@app.head("/", include_in_schema=False)
+def index_head():
+    # uptime monitors / proxies often HEAD the root; answer 200 instead of 405
+    return Response(status_code=200)
+
+
 @app.get("/", response_class=HTMLResponse)
 def index():
     here = os.path.dirname(os.path.abspath(__file__))
