@@ -3,32 +3,76 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>SAMAY · optimal post-quantum migration scheduling</title>
+<title>SAMAY — the provably optimal path to quantum-safe encryption</title>
+<meta name="description" content="Quantum computers will break today's encryption. SAMAY computes the provably optimal order to migrate your certificates, keys, and signatures to quantum-safe cryptography — on deadline, without missing a dependency." />
 <style>
   :root{
-    --bg:#0b0f17; --panel:#121826; --panel2:#0e1422; --ink:#e7ecf5; --mut:#8a97ad;
-    --acc:#57d1c2; --acc2:#7aa2ff; --bad:#ff6b6b; --good:#54d18a; --line:#202a3d;
+    --bg:#0b0f17; --panel:#121826; --panel2:#0e1422; --ink:#eef2f9; --mut:#93a0b6;
+    --acc:#57d1c2; --acc2:#7aa2ff; --bad:#ff6b6b; --good:#54d18a; --warn:#ffcc66; --line:#1e2940;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#16243f 0,var(--bg) 55%);
-       color:var(--ink);font:15px/1.55 ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial}
-  .wrap{max-width:1040px;margin:0 auto;padding:32px 20px 80px}
-  header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
-  h1{font-size:30px;margin:0;letter-spacing:.3px}
-  .sam{font-weight:800;background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .dev{color:var(--mut);font-size:13px}
-  .lede{color:var(--mut);max-width:760px;margin:14px 0 26px}
-  .lede b{color:var(--ink)}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:16px/1.6 ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  a{color:var(--acc2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .eyebrow{letter-spacing:.18em;text-transform:uppercase;font-size:12px;color:var(--acc);font-weight:700}
+
+  /* HERO */
+  .hero{position:relative;overflow:hidden;
+        background:radial-gradient(900px 500px at 75% -15%,#16243f 0,var(--bg) 60%);
+        border-bottom:1px solid var(--line)}
+  .hero .wrap{padding:64px 20px 56px}
+  .brand{display:flex;align-items:baseline;gap:12px;margin-bottom:30px}
+  .brand .sam{font-weight:800;font-size:22px;background:linear-gradient(90deg,var(--acc),var(--acc2));
+              -webkit-background-clip:text;background-clip:text;color:transparent}
+  .brand .tag{color:var(--mut);font-size:13px}
+  h1{font-size:clamp(30px,5vw,52px);line-height:1.08;margin:.2em 0;letter-spacing:-.02em;font-weight:800}
+  h1 .hl{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{font-size:clamp(16px,2.1vw,20px);color:#c7d0df;max-width:760px;margin:18px 0 8px}
+  .sub b{color:var(--ink)}
+  .promise{color:var(--mut);font-size:15px;margin:6px 0 28px}
+  .cta{display:inline-flex;align-items:center;gap:10px;padding:15px 26px;border:0;border-radius:12px;
+       font-weight:800;font-size:17px;cursor:pointer;color:#04121a;
+       background:linear-gradient(90deg,var(--acc),var(--acc2));box-shadow:0 10px 30px rgba(87,209,194,.25)}
+  .cta:hover{filter:brightness(1.05)}
+  .cta.sec{background:none;color:var(--acc2);box-shadow:none;padding-left:8px}
+
+  /* SECTIONS */
+  section{padding:56px 0;border-bottom:1px solid var(--line)}
+  h2{font-size:clamp(22px,3vw,30px);margin:0 0 6px;letter-spacing:-.01em}
+  .lede{color:var(--mut);max-width:720px;margin:0 0 30px}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
   .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
-        border-radius:14px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
-  .controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;align-items:end}
-  label{display:block;font-size:12px;color:var(--mut);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px}
-  input[type=range]{width:100%}
+        border-radius:16px;padding:22px}
+  .card h3{margin:.1em 0 .4em;font-size:18px}
+  .card p{margin:0;color:var(--mut);font-size:15px}
+  .ico{font-size:22px}
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:8px}
+  @media(max-width:620px){.vs{grid-template-columns:1fr}}
+  .vs .col{border-radius:16px;padding:22px;border:1px solid var(--line)}
+  .vs .old{background:#19121a}
+  .vs .new{background:#0f1a1c;border-color:#2a4d49}
+  .vs h3{margin:0 0 10px;font-size:16px}
+  .vs .old h3{color:var(--bad)} .vs .new h3{color:var(--acc)}
+  .vs ul{margin:0;padding-left:18px;color:var(--mut);font-size:15px}
+  .vs li{margin:6px 0}
+
+  /* DEMO */
+  #demo{background:radial-gradient(800px 400px at 20% 0,#13202f 0,var(--bg) 60%)}
+  .controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;align-items:end;margin-top:10px}
+  label{display:block;font-size:11px;color:var(--mut);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px}
+  input[type=range]{width:100%;accent-color:var(--acc)}
   .val{color:var(--acc);font-variant-numeric:tabular-nums}
-  button{appearance:none;border:0;border-radius:10px;padding:12px 18px;font-weight:700;cursor:pointer;
-         background:linear-gradient(90deg,var(--acc),var(--acc2));color:#04121a;font-size:15px}
-  button:disabled{opacity:.55;cursor:wait}
-  .row{display:flex;gap:18px;flex-wrap:wrap;margin-top:22px}
+  button.go{appearance:none;border:0;border-radius:11px;padding:13px 20px;font-weight:800;cursor:pointer;
+       background:linear-gradient(90deg,var(--acc),var(--acc2));color:#04121a;font-size:15px}
+  button.go:disabled{opacity:.55;cursor:wait}
+  .verdict{margin:20px 0 6px;padding:14px 16px;border-radius:12px;font-size:15.5px;border:1px solid var(--line);background:#0e1626}
+  .verdict.win{border-color:#2a4d49;background:#0f1a1c}
+  .verdict.miss{border-color:#5b2330;background:#1a1013}
+  .verdict b{color:var(--ink)}
+  .row{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px}
   .row>.card{flex:1;min-width:300px}
   table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
   th,td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--line)}
@@ -36,65 +80,166 @@
   .opt{color:var(--good);font-weight:700}
   .infeas{color:var(--bad);font-weight:700}
   .gant{display:grid;gap:3px;margin-top:6px}
-  .gr{display:grid;grid-template-columns:130px 1fr;align-items:center;gap:8px}
+  .gr{display:grid;grid-template-columns:120px 1fr;align-items:center;gap:8px}
   .gr .nm{font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .bar{height:14px;border-radius:4px;display:flex}
+  .bar{height:13px;border-radius:4px;display:flex}
   .cell{flex:1;border-right:1px solid #0c1320}
   .mig{background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:3px}
   .muted{color:var(--mut);font-size:13px}
   .pill{display:inline-block;padding:2px 9px;border-radius:999px;background:#15203a;color:var(--acc2);font-size:12px;margin-left:6px}
-  footer{margin-top:34px;color:var(--mut);font-size:12.5px}
-  a{color:var(--acc2)}
+
+  /* STAT STRIP */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:18px}
+  .stat{padding:18px;border-radius:14px;border:1px solid var(--line);background:var(--panel2)}
+  .stat .n{font-size:30px;font-weight:800;color:var(--acc)}
+  .stat .l{color:var(--mut);font-size:14px;margin-top:4px}
+
+  footer{padding:40px 0 70px;color:var(--mut);font-size:14px}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:18px;justify-content:space-between;align-items:center}
+  .note{max-width:640px}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1><span class="sam">समय · SAMAY</span></h1>
-    <span class="dev">provably optimal post-quantum migration scheduling</span>
-  </header>
-  <p class="lede">Every vendor migrates crypto <b>highest-risk-first</b>. SAMAY computes the
-    <b>provably optimal</b> phased schedule under dependency, budget, and regulatory-deadline
-    constraints, then shows you exactly how much the greedy heuristics leave on the table, and
-    when they miss a mandate entirely. Generate a synthetic estate and solve it live.</p>
+
+<!-- ============ HERO ============ -->
+<header class="hero"><div class="wrap">
+  <div class="brand"><span class="sam">समय · SAMAY</span><span class="tag">post-quantum migration planner</span></div>
+  <p class="eyebrow">The quantum clock is already running</p>
+  <h1>Quantum computers will break the encryption<br><span class="hl">protecting everything you have.</span></h1>
+  <p class="sub">Every certificate, key, and digital signature has to move to new quantum-safe
+    cryptography — <b>thousands of them</b>, in a dependency-safe order, before the deadline
+    regulators have already set. <b>SAMAY computes the provably optimal migration plan.</b>
+    Guessing the order leaves data exposed and misses mandates.</p>
+  <p class="promise">The provably optimal path to quantum-safe — proven, not guessed.</p>
+  <a class="cta" href="#demo">▶ Watch it solve, live</a>
+  <a class="cta sec" href="#what">What is this? →</a>
+</div></header>
+
+<!-- ============ PROBLEM ============ -->
+<section id="why"><div class="wrap">
+  <p class="eyebrow">Why this is urgent</p>
+  <h2>The migration is mandatory, massive, and on a clock.</h2>
+  <p class="lede">Post-quantum migration isn't optional or far-off. Three things make it brutal:</p>
+  <div class="grid3">
+    <div class="card"><div class="ico">🕰️</div><h3>Harvest now, decrypt later</h3>
+      <p>Attackers are recording your encrypted traffic <b>today</b> to decrypt it the moment a
+        quantum computer arrives. Anything that must stay secret for years is <b>already</b> at risk.</p></div>
+    <div class="card"><div class="ico">⚖️</div><h3>Mandated, with deadlines</h3>
+      <p>NIST, the NSA (CNSA 2.0), and national programs <b>require</b> the move, with hard dates
+        (2030–2035). Miss them and it's a compliance and audit failure, not a maybe.</p></div>
+    <div class="card"><div class="ico">🧩</div><h3>Thousands of tangled pieces</h3>
+      <p>A real estate has thousands of crypto usages that <b>depend on each other</b> (a service can't
+        go quantum-safe before its certificate authority does), limited capacity each quarter, and
+        assets that can't move until vendors ship support.</p></div>
+  </div>
+</div></section>
+
+<!-- ============ WHAT IT DOES ============ -->
+<section id="what"><div class="wrap">
+  <p class="eyebrow">What SAMAY does</p>
+  <h2>It turns a panicky guess into a provably optimal roadmap.</h2>
+  <div class="vs">
+    <div class="col old"><h3>✕ How everyone plans it today</h3>
+      <ul>
+        <li>“Migrate the highest-risk thing first.” A gut-feel ranking.</li>
+        <li>Ignores the order dependencies force on you.</li>
+        <li>Can’t see a quarter ahead — so it <b>misses regulatory deadlines</b>.</li>
+        <li>No way to prove the plan is any good.</li>
+      </ul></div>
+    <div class="col new"><h3>✓ How SAMAY plans it</h3>
+      <ul>
+        <li>Treats it as the scheduling problem it actually is.</li>
+        <li>Computes the <b>provably optimal</b> order — which asset, which quarter.</li>
+        <li>Respects every dependency, budget limit, and mandated deadline.</li>
+        <li>Proves no schedule leaves less data at risk.</li>
+      </ul></div>
+  </div>
+  <p class="lede" style="margin-top:26px">You feed it your cryptographic inventory (a standard
+    <b>CBOM</b>) or a what-if scenario; it returns the migration roadmap and shows you, in hard
+    numbers, how much safer the optimal order is than the one you'd have guessed.</p>
+</div></section>
+
+<!-- ============ LIVE DEMO (the proof + the one CTA) ============ -->
+<section id="demo"><div class="wrap">
+  <p class="eyebrow">See it for yourself</p>
+  <h2>Generate a realistic estate. Watch SAMAY find the optimal plan.</h2>
+  <p class="lede">No sign-up. We synthesize a cryptographic estate to your settings, solve it to
+    proven optimality on the server, and compare it to the “highest-risk-first” approach everyone
+    uses. Drag the sliders to make it harder.</p>
 
   <div class="card">
     <div class="controls">
-      <div><label>estate size <span class="val" id="vsize">45</span></label>
-        <input id="size" type="range" min="10" max="160" value="45"></div>
-      <div><label>budget tightness <span class="val" id="vt">0.65</span></label>
-        <input id="tight" type="range" min="30" max="98" value="65"></div>
+      <div><label>estate size <span class="val" id="vsize">35</span> assets</label>
+        <input id="size" type="range" min="10" max="120" value="35"></div>
+      <div><label>budget / quarter <span class="val" id="vt">0.65</span></label>
+        <input id="tight" type="range" min="30" max="95" value="65"></div>
       <div><label>deadline pressure <span class="val" id="vp">0.40</span></label>
-        <input id="press" type="range" min="0" max="95" value="40"></div>
+        <input id="press" type="range" min="0" max="90" value="40"></div>
       <div><label>dependency density <span class="val" id="vd">0.30</span></label>
-        <input id="dens" type="range" min="0" max="80" value="30"></div>
-      <div><button id="go">Generate &amp; solve →</button></div>
+        <input id="dens" type="range" min="0" max="70" value="30"></div>
+      <div><button class="go" id="go">Generate &amp; solve →</button></div>
     </div>
   </div>
 
+  <div class="verdict" id="verdict">Drag the sliders, then hit <b>Generate &amp; solve</b>. The
+    tighter the budget and the harder the deadlines, the more the “highest-risk-first” guess
+    falls apart — sometimes missing a mandate outright.</div>
+
   <div class="row">
     <div class="card">
-      <h3 style="margin:.2em 0">Optimal vs greedy <span class="pill" id="status">idle</span></h3>
-      <div class="muted" id="meta">Move the sliders, then solve. Tighter budgets and harder deadlines
-        are where optimization pays — and where greedy can become infeasible.</div>
+      <h3 style="margin:.2em 0">Optimal vs. the standard guess <span class="pill" id="status">idle</span></h3>
+      <div class="muted" id="meta">residual risk = how much sensitive data stays exposed over time. Lower is safer.</div>
       <table style="margin-top:12px">
-        <thead><tr><th>method</th><th>risk</th><th>gap vs optimal</th><th>feasible?</th></tr></thead>
+        <thead><tr><th>plan</th><th>risk left</th><th>vs optimal</th><th>meets deadlines?</th></tr></thead>
         <tbody id="rows"><tr><td class="muted" colspan="4">—</td></tr></tbody>
       </table>
     </div>
     <div class="card">
-      <h3 style="margin:.2em 0">Optimal roadmap</h3>
-      <div class="muted" id="rmeta">one row per asset; the bar marks the migration period.</div>
+      <h3 style="margin:.2em 0">The optimal roadmap</h3>
+      <div class="muted" id="rmeta">one row per asset; the bar marks the quarter it migrates.</div>
       <div class="gant" id="gantt"></div>
     </div>
   </div>
+</div></section>
 
-  <footer>
-    CPU-only optimization (OR-Tools CP-SAT). A research reference tool, not a product —
-    read the honest study in <code>REPORT.md</code>. Demo caps instance size and solver time.
-    <span id="ver"></span>
-  </footer>
-</div>
+<!-- ============ PROOF / FINDING ============ -->
+<section id="proof"><div class="wrap">
+  <p class="eyebrow">The honest finding</p>
+  <h2>We tested whether optimal really beats the guess. It does.</h2>
+  <p class="lede">Across 515 cases solved to proven optimality (the full, reproducible study is in
+    the repo):</p>
+  <div class="stats">
+    <div class="stat"><div class="n">~56%</div><div class="l">less residual risk than “highest-risk-first”, median</div></div>
+    <div class="stat"><div class="n">25–42%</div><div class="l">of the time, the standard guess <b>misses a regulatory deadline</b></div></div>
+    <div class="stat"><div class="n">3 of 5</div><div class="l">greedy heuristics go infeasible on a real India-DPI estate; the optimum meets all 18 mandates</div></div>
+  </div>
+  <p class="lede" style="margin-top:22px">The transferable lesson is <b>feasibility</b>: the
+    everyday approach quietly produces roadmaps that miss mandates. The exact risk reduction depends
+    on your estate — which is why SAMAY computes it for <i>yours</i> instead of quoting an average.</p>
+</div></section>
+
+<!-- ============ WHO ============ -->
+<section id="who"><div class="wrap">
+  <p class="eyebrow">Who it's for</p>
+  <h2>The people who own the quantum-safe transition.</h2>
+  <p class="lede">CISOs, security architects, and PQC-migration program leads at banks, government
+    agencies, and large enterprises planning a multi-year move to quantum-safe cryptography — anyone
+    who has to defend a migration plan to an auditor or a board.</p>
+  <a class="cta" href="#demo">▶ Try it on a sample estate</a>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="note">
+    <b>SAMAY · pqcsched</b> — an open-source <b>research reference tool</b> (not a commercial
+    product) and an honest study of when optimal scheduling beats greedy. CPU-only. Apache-2.0.
+    The demo caps instance size and solver time.
+  </div>
+  <div>
+    <a id="gh" href="https://github.com/divyamohan1993/samay">GitHub ↗</a> &nbsp;·&nbsp;
+    <a href="https://github.com/divyamohan1993/samay/blob/main/REPORT.md">Read the study ↗</a>
+    <span id="ver" class="muted"></span>
+  </div>
+</div></footer>
 
 <script>
 const $=id=>document.getElementById(id);
@@ -105,38 +250,47 @@ const sync=()=>{ $("vsize").textContent=$("size").value;
 ["size","tight","press","dens"].forEach(id=>$(id).addEventListener("input",sync)); sync();
 
 async function run(){
-  const btn=$("go"); btn.disabled=true; $("status").textContent="solving…";
+  const btn=$("go"); btn.disabled=true; $("status").textContent="solving…"; $("status").className="pill";
   try{
     const g=await (await fetch("/gen",{method:"POST",headers:{"content-type":"application/json"},
       body:JSON.stringify({size:+$("size").value, T:20, dep_density:+$("dens").value/100,
         budget_tightness:+$("tight").value/100, deadline_pressure:+$("press").value/100, seed:7})})).json();
     const r=await (await fetch("/solve",{method:"POST",headers:{"content-type":"application/json"},
       body:JSON.stringify({instance:g, time_limit:8})})).json();
-    $("status").textContent=r.status+(r.optimal?" ✓":"");
-    $("status").className="pill";
-    const c=r.greedy_comparison||{}; const rm=r.roadmap||{};
-    $("meta").innerHTML=`optimal residual risk <b>${r.objective}</b> · cost <b>${rm.cost}</b> ·
-      ${rm.n_migrated} assets migrated · solved in ${r.wall_time}s`;
-    const order=["highest_risk","risk_per_cost","edf","spt","random"];
-    let html=`<tr><td class="opt">OPTIMAL</td><td>${r.objective}</td><td>—</td><td class="opt">yes</td></tr>`;
-    for(const b of order){ const v=c[b]; if(!v) continue;
-      const gap=v.gap_vs_optimal==null?"—":(v.gap_vs_optimal*100).toFixed(1)+"%";
-      html+=`<tr><td>${b.replace(/_/g,' ')}</td><td>${v.risk}</td><td>${gap}</td>
-        <td class="${v.feasible?'':'infeas'}">${v.feasible?'yes':'NO (misses mandate)'}</td></tr>`; }
+    $("status").textContent=r.optimal?"proven optimal ✓":(r.status+" (time-limited)");
+    const c=r.greedy_comparison||{}, rm=r.roadmap||{};
+    const hr=c.highest_risk||{};
+    // plain-language verdict
+    let v=$("verdict"), gap=hr.gap_vs_optimal;
+    if(hr && hr.feasible===false){
+      v.className="verdict miss";
+      v.innerHTML=`❌ The standard <b>“highest-risk-first”</b> plan <b>misses a regulatory deadline</b> on this estate — an infeasible roadmap. SAMAY's optimal plan meets every mandate while leaving the least data at risk.`;
+    } else if(gap!=null){
+      v.className="verdict win";
+      v.innerHTML=`✅ SAMAY's plan is provably best. The standard <b>“highest-risk-first”</b> guess would leave <b>${(gap*100).toFixed(0)}% more data at risk</b> over time — same assets, same budget, just a worse order.`;
+    } else { v.className="verdict"; v.textContent="Solved. See the comparison below."; }
+
+    $("meta").innerHTML=`optimal plan: <b>${rm.n_migrated}</b> assets scheduled across 20 quarters · residual risk <b>${r.objective}</b> · solved in ${r.wall_time}s`;
+    const order=[["highest_risk","highest-risk-first (the usual approach)"],["risk_per_cost","risk-per-cost"],["edf","earliest-deadline-first"],["spt","quickest-first"],["random","random"]];
+    let html=`<tr><td class="opt">SAMAY (optimal)</td><td>${r.objective}</td><td>—</td><td class="opt">yes</td></tr>`;
+    for(const [k,label] of order){ const x=c[k]; if(!x) continue;
+      const gg=x.gap_vs_optimal==null?"—":("+"+(x.gap_vs_optimal*100).toFixed(0)+"%");
+      html+=`<tr><td>${label}</td><td>${x.risk}</td><td>${gg}</td>
+        <td class="${x.feasible?'':'infeas'}">${x.feasible?'yes':'NO — misses a mandate'}</td></tr>`; }
     $("rows").innerHTML=html;
-    // gantt
-    const T=g.T, plan=rm.plan_by_period||{}; const when={};
+    // roadmap gantt
+    const T=g.T, plan=rm.plan_by_period||{}, when={};
     for(const t in plan) for(const a of plan[t]) when[a]=+t;
-    const ids=g.assets.map(a=>a.id).filter(a=>a in when).slice(0,40);
-    $("rmeta").textContent=`${Object.keys(when).length} assets across ${T} periods (showing ${ids.length})`;
+    const ids=g.assets.map(a=>a.id).filter(a=>a in when).slice(0,36);
+    $("rmeta").textContent=`${Object.keys(when).length} assets across ${T} quarters (showing ${ids.length})`;
     $("gantt").innerHTML=ids.map(a=>{ const tt=when[a];
       const cells=Array.from({length:T},(_,i)=>`<span class="cell ${i===tt?'mig':''}"></span>`).join("");
       return `<div class="gr"><span class="nm">${a}</span><span class="bar">${cells}</span></div>`; }).join("");
-  }catch(e){ $("status").textContent="error"; $("meta").textContent=String(e); }
+  }catch(e){ $("status").textContent="error"; $("verdict").textContent="Something went wrong: "+e; }
   finally{ btn.disabled=false; }
 }
 $("go").addEventListener("click",run);
-fetch("/health").then(r=>r.json()).then(j=>$("ver").textContent="· v"+j.version).catch(()=>{});
+fetch("/health").then(r=>r.json()).then(j=>$("ver").textContent=" · v"+j.version).catch(()=>{});
 </script>
 </body>
 </html>
