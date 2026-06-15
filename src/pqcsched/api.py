@@ -401,7 +401,11 @@ def index_head():
 def index():
     here = os.path.dirname(os.path.abspath(__file__))
     path = os.path.join(here, "static", "index.html")
+    # no-cache so a redeploy is picked up immediately (the page is small; the
+    # browser revalidates rather than serving a stale cached copy).
+    no_cache = {"Cache-Control": "no-cache, must-revalidate", "Pragma": "no-cache"}
     if os.path.exists(path):
         with open(path, encoding="utf-8") as fh:
-            return HTMLResponse(fh.read())
-    return HTMLResponse("<h1>SAMAY · pqcsched</h1><p>API at <a href='/api'>/api</a></p>")
+            return HTMLResponse(fh.read(), headers=no_cache)
+    return HTMLResponse("<h1>SAMAY · pqcsched</h1><p>API at <a href='/api'>/api</a></p>",
+                        headers=no_cache)
