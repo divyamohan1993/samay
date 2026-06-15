@@ -46,6 +46,7 @@ and the in-process HiGHS (whose ``solverModel`` is released after solve), so
 from __future__ import annotations
 
 import logging
+import sys
 import time
 from typing import Any, Callable
 
@@ -126,6 +127,15 @@ def _make_solver(
         raise ValueError(
             f"MILP backend {backend!r} is not available; "
             f"available backends: {AVAILABLE_BACKENDS}"
+        )
+    # PuLP's CBC (PULP_CBC_CMD) deadlocks in `cbc.wait()` on Windows. `AVAILABLE_
+    # BACKENDS` stays a faithful PuLP probe, but refuse to *dispatch* into the hang:
+    # fail fast and loud with a pointer to HiGHS rather than letting a CLI/API call
+    # block forever. CBC remains usable on POSIX (the deploy target).
+    if backend == "cbc" and sys.platform == "win32":
+        raise ValueError(
+            "CBC (PuLP PULP_CBC_CMD) deadlocks on Windows in cbc.wait(); "
+            "use backend='highs' (in-process, robust). CBC works on Linux/macOS."
         )
     # All probed factories (PULP_CBC_CMD, HiGHS, HiGHS_CMD, GUROBI[_CMD]) accept
     # this common kwarg set in PuLP 3.x; keep it minimal and uniform.
