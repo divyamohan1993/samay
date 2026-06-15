@@ -87,6 +87,8 @@ def estate_from_json(
     path: str,
     *,
     scenario: str = "estate",
+    title: str | None = None,
+    blurb: str | None = None,
     t_crqc: int = 30,
     budget_tightness: float = 0.55,
 ) -> Instance:
@@ -131,8 +133,8 @@ def estate_from_json(
     return Instance(
         assets=assets, T=T, budget=[per] * T, deps=deps, clusters=clusters, t_crqc=t_crqc,
         meta={
-            "scenario": scenario, "title": data.get("scenario", scenario),
-            "blurb": data.get("blurb", ""), "period_unit": "quarter",
+            "scenario": scenario, "title": title or data.get("scenario", scenario),
+            "blurb": blurb or data.get("blurb", ""), "period_unit": "quarter",
             "horizon": data.get("period_index_note", ""),
             "stats": {"n_assets": len(assets), "n_deps": len(deps), "n_clusters": len(clusters),
                       "n_mandated": sum(1 for x in assets if x.deadline is not None),
@@ -147,7 +149,11 @@ def india_dpi_instance(path: str | None = None, *, t_crqc: int = 30,
                        budget_tightness: float = 0.55) -> Instance:
     """India Digital Public Infrastructure case-study estate (public architecture)."""
     p = _resolve(path, "benchmark/india_dpi.json", "research/dpi-estate.json")
-    return estate_from_json(p, scenario="india_dpi", t_crqc=t_crqc, budget_tightness=budget_tightness)
+    return estate_from_json(
+        p, scenario="india_dpi", t_crqc=t_crqc, budget_tightness=budget_tightness,
+        title="India Digital Public Infrastructure",
+        blurb="A stylised India DPI estate (Aadhaar / UPI / DigiLocker / eSign / CCA PKI) "
+              "modelled from public architecture — not internal data.")
 
 
 def enterprise_instance(path: str | None = None, *, t_crqc: int = 30,

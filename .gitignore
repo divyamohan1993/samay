@@ -24,3 +24,7 @@ Thumbs.db
 .env
 *.pem
 *.key
+
+# browser test artifacts
+.playwright-mcp/
+*.jpeg
