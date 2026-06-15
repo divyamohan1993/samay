@@ -139,7 +139,10 @@ def greedy_current_risk(inst: Instance, risk_model: RiskModel | None = None) -> 
             return sum(rm.int_weight(by_id[m], _t, inst.t_crqc) for m in g.members)
 
         while True:
-            elig = [by_gid[gid] for gid in pending
+            # sorted(pending) — deterministic iteration (a set of string gids
+            # iterates in hash-seed-dependent order, which would make the random
+            # baseline irreproducible across processes).
+            elig = [by_gid[gid] for gid in sorted(pending)
                     if by_gid[gid].earliest <= t and by_gid[gid].cost <= b
                     and all(pg in done_group and done_group[pg] <= t for pg in pred_groups[gid])]
             if not elig:
@@ -203,7 +206,7 @@ def greedy_schedule(
         while True:
             elig = [
                 by_gid[gid]
-                for gid in pending
+                for gid in sorted(pending)   # deterministic (sets of str gids hash-order)
                 if by_gid[gid].earliest <= t
                 and by_gid[gid].cost <= b
                 and deps_ready(by_gid[gid], t)
