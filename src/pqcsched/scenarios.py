@@ -74,7 +74,10 @@ def _resolve(path: str | None, *names: str) -> str:
         return path
     here = os.path.dirname(os.path.abspath(__file__))
     for n in names:
-        cand = os.path.join(here, "..", "..", n)
+        cand = os.path.join(here, "..", "..", n)        # repo layout (dev/editable)
+        pkg = os.path.join(here, "data", os.path.basename(n))  # shipped package-data (wheel)
+        if os.path.exists(pkg):
+            return pkg
         if os.path.exists(cand):
             return cand
     raise FileNotFoundError(f"estate json not found: {names}")

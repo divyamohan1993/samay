@@ -43,7 +43,7 @@ pqcsched = "pqcsched.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-pqcsched = ["static/*.html", "static/*.css", "static/*.js"]
+pqcsched = ["static/*.html", "static/*.css", "static/*.js", "data/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
