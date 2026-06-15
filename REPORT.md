@@ -416,6 +416,14 @@ configs/experiment.yaml` (checkpointed/resumable). All seeds fixed; solver
 versions and parameters logged per row in `runs/*.csv`. `PROGRESS.md` is the dated
 decision log and holds the pre-registration.
 
+> *One caveat for exact reproduction:* the committed `runs/main.csv` `random`-
+> baseline column was generated before a determinism fix (the greedy now iterates
+> group ids in sorted order; previously a `set`'s hash-seed-dependent order made
+> the *random* baseline vary across processes). Re-running with current code yields
+> different — but qualitatively identical (random is the worst baseline, ~140%
+> gap) — random values. The four headline baselines use deterministic keys and
+> reproduce exactly; only the lower-bound `random` reference is affected.
+
 ---
 
 ## 15. References
