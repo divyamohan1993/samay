@@ -247,14 +247,29 @@ every regime tested.** Per-instance paired gaps `(R_greedy − R_opt)/R_opt`:
 
 Two findings, both honest and load-bearing:
 
-**9.1 The gap is large everywhere — greedy is never near-optimal.** Not one of the
-20 fully-evaluated cells has a median highest-risk gap below 10%. The optimal plan
-retires roughly **half to two-thirds more residual risk** than the
-migrate-highest-risk-first ranking every vendor uses. Counter-intuitively the gap
-is *largest at the loosest budgets* (tight 0.4 → 74.5% median; tight 0.95 →
-48.8%): when capacity is ample, greedy has the most freedom to mis-time
-migrations, while a tight budget forces a more constrained (and accidentally less
-wrong) order. Regime heatmaps: `artifacts/fig_gap_highest_risk_tight_press.png`,
+**9.1 The gap is large, and it tracks *scheduling freedom*.** The optimal plan
+retires roughly **half to two-thirds more residual risk** than migrate-highest-
+risk-first across the bulk of the grid. The regime structure is coherent and, at
+first sight, counter-intuitive: **the gap shrinks as the problem becomes more
+constrained.**
+
+- **Budget tightness:** gap *largest at loose budgets* — tight 0.4 → 74.5% median,
+  tight 0.95 → 48.8%.
+- **Dependency density** (size 30, where the dense-precedence cells are exactly
+  solvable; `runs/dep_sweep.csv`): **dep 0.1 → 76%, dep 0.4 → 43%, dep 0.7 → 11%**
+  median highest-risk gap (the HNDL-aware greedy tracks it: 62% / 46% / 12%).
+
+Both axes say the same thing: **optimization pays most where there is the most
+scheduling freedom.** Ample budget and sparse dependencies give greedy room to
+mis-time migrations (squandering early capacity on not-yet-risky assets); tight
+budgets and dense precedence remove that freedom, forcing greedy and optimal into
+similar orders. So the naive intuition ("optimization matters most when
+resources are scarce") is *backwards* here — a genuinely useful finding for
+practitioners deciding when an exact solver is worth it: it is worth the most for
+*loosely-constrained, sparsely-dependent* estates. (The dense dep 0.7 cells at the
+headline size 45 sit at/beyond CP-SAT's exact frontier — see §10 — so the
+dependency-density result is reported at size 30 where proven optima are
+available.) Regime heatmaps: `artifacts/fig_gap_highest_risk_tight_press.png`,
 `artifacts/fig_gap_dens_tight.png`.
 
 **9.2 It is not merely a naive sort — the combinatorial structure matters.** We

@@ -20,9 +20,13 @@ tested* — this is **not** a "greedy suffices" result:
 - **Greedy frequently infeasible**: feasibility collapses from 97% (low deadline
   pressure) to **25%** (high pressure) — three-quarters of greedy roadmaps miss a
   regulatory mandate.
-- **Counter-intuitive regime**: the gap is *largest at loose budgets* (74% at
-  tightness 0.4 vs 49% at 0.95) — ample capacity gives greedy more freedom to
-  mis-time. Regime heatmaps in `artifacts/`.
+- **The gap tracks scheduling FREEDOM** (counter-intuitive but coherent): it is
+  *largest where the problem is least constrained*. By budget tightness: 74% at
+  0.4 → 49% at 0.95. By dependency density (size 30, solvable): **76% (dep 0.1) →
+  43% (0.4) → 11% (0.7)**. Loose budgets + sparse deps give greedy room to
+  mis-time; tight/dense constraints force greedy and optimal together. Practical
+  takeaway: an exact solver pays most for *loosely-constrained, sparsely-dependent*
+  estates. Regime heatmaps in `artifacts/`.
 
 **Scalability (RQ3).** CP-SAT proves optimality reliably to **~60 assets** (≤14 s),
 cliff at **~80**. Beyond it, **LNS matches the optimum where known (≈0% gap)** and
@@ -44,11 +48,14 @@ below before the run.
 
 **Honest limitations.** Optimality is *relative to* the HNDL-aware time-integrated
 objective and the pre-registered synthetic distributions (no public census of real
-estates exists). Garbage CBOM in → garbage schedule out. The 13 hardest
-dependency-dense × tight-budget cells are only partially covered (the box was
-shared with an unrelated `praman` workload, so SAMAY ran niced/capped to avoid
-disrupting it; a dedicated box at 12 workers completes them). Annual periods trade
-intra-year granularity for tractability. See `REPORT.md` §13.
+estates exists). Garbage CBOM in → garbage schedule out. At the headline size 45
+the dense-dependency (dep 0.7) cells sit at/beyond CP-SAT's exact frontier, so the
+dependency-density result is reported at size 30 (where proven optima exist); the
+size-45 main grid covers dep {0.1, 0.4} fully. The box was shared with an
+unrelated `praman` ML workload throughout, so SAMAY ran niced/worker-capped to
+avoid disrupting it (kept that promise: praman + the udaan stack untouched, disk
+safe). Annual periods trade intra-year granularity for tractability. See
+`REPORT.md` §13.
 
 **§13 Definition-of-Done:** all boxes met except a *partial* coverage of the
 hardest cells and a focused (not exhaustive) sensitivity sweep — both consequences
