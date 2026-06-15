@@ -32,7 +32,16 @@ bash deploy/deploy_cloudrun.sh --yes      # project dmjone, region asia-east1
 Then add the Cloudflare DNS record it prints (CNAME `samay` → `ghs.googlehosted.com`,
 proxied) and map the custom domain.
 
+> **Image not yet built.** The Dockerfile and app are written and the app is
+> smoke-tested in-process (TestClient: `/health`, `/gen`, `/solve`, oversized-body
+> rejection, security headers all pass), but the **container image has not been
+> built or run** in this environment (no Docker on the dev box; building on the
+> shared compute box was avoided to protect its disk). First step below is to
+> build and run it locally.
+
 ## Pre-deploy checklist (adversarial)
+- [ ] `docker build -t samay .` succeeds; `docker run -p 8080:8080 samay` serves
+      `/` and `/health` (the static asset ships via package-data — verify it loads).
 - [ ] `pip audit` / dependency scan clean (no high/critical).
 - [ ] SAST (semgrep/CodeQL) clean.
 - [ ] Confirm caps in `LIMITS` reject a 10k-asset body with a small 4xx (no OOM).

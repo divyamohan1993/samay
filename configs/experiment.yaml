@@ -18,8 +18,8 @@ studies:
     cluster_frac: 0.1
     delayed_frac: 0.15
     n_instances: 18          # coverage-first: all 36 cells sampled; deepen later if time
-    time_limit: 40           # excluded hard-cell solves don't burn 60s
-    workers: 6               # polite cap (shared box: active praman job)
+    time_limit: 30           # excluded hard-cell solves don't stall (OPTIMAL-only headline)
+    workers: 4               # local finish of the dep=0.7 plane (box returned to praman)
     base_seed: 1000
 
   # --- gap vs estate scale (exact regime) ----------------------------------

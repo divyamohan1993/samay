@@ -104,6 +104,15 @@ def _probe_backends() -> dict[str, Callable[..., "pulp.LpSolver"]]:
 _BACKEND_FACTORIES: dict[str, Callable[..., "pulp.LpSolver"]] = _probe_backends()
 AVAILABLE_BACKENDS: tuple[str, ...] = tuple(sorted(_BACKEND_FACTORIES))
 
+# Default free backend. Prefer in-process **HiGHS** (via highspy): robust and
+# cross-platform with no external process. CBC (PuLP's bundled `PULP_CBC_CMD`) is a
+# valid fallback on Linux but has a known subprocess deadlock on Windows — it can
+# hang in `cbc.wait()` regardless of the time limit — so it is never the default.
+DEFAULT_BACKEND: str | None = (
+    "highs" if "highs" in AVAILABLE_BACKENDS
+    else ("cbc" if "cbc" in AVAILABLE_BACKENDS else None)
+)
+
 
 def _make_solver(
     backend: str, *, time_limit: float, threads: int
@@ -271,7 +280,7 @@ def solve_milp(
     inst: Instance,
     risk_model: RiskModel | None = None,
     *,
-    backend: str = "cbc",
+    backend: str | None = None,
     eps_cost: int | None = None,
     time_limit: float = 60.0,
     threads: int = 12,
@@ -296,6 +305,9 @@ def solve_milp(
     ValueError:  if `backend` is not available on this machine.
     """
     rm = risk_model or RiskModel()
+    backend = backend or DEFAULT_BACKEND
+    if backend is None:
+        raise ValueError(f"no free MILP backend available; probed: {AVAILABLE_BACKENDS}")
     solver_name = f"milp-{backend}"
     params: dict[str, Any] = {
         "backend": backend,
@@ -363,7 +375,7 @@ def solve(
     inst: Instance,
     risk_model: RiskModel | None = None,
     *,
-    backend: str = "cbc",
+    backend: str | None = None,
     **kwargs: Any,
 ) -> SolveResult:
     """Dispatcher: solve `inst` with the named MILP `backend`.
