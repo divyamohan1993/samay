@@ -102,6 +102,16 @@ Readiness Index** to assess exposure and prioritise migration, with critical
 infrastructure quantum-safe by 2029 and enterprises by 2033 — i.e. policy itself
 asks for exactly the prioritisation SAMAY formalises.
 
+*As of 2026, the mandate has hardened further:* NIST added **HQC** as a fifth
+(non-lattice) standard algorithm (Mar 2025); the **EU** set a coordinated **hard
+2030 deadline** for critical infrastructure (incl. finance), five years ahead of
+the US, with member states beginning transition by end-2026; CNSA 2.0's first
+exclusive-use dates (software/firmware signing) land in **2027**. Meanwhile the
+threat accelerated — 2025 work cut the estimated cost of breaking RSA-2048 from
+~20M to under 1M qubits — while only ~5% of enterprises have actually deployed
+PQC. The window between "mandated" and "done" is exactly the scheduling problem
+this work addresses.
+
 **Migration as a research problem.** A EUROCRYPT 2026 affiliated workshop
 (**MAgiCS**, Rome, May 2026) exists precisely because cryptographic migration and
 agility modelling are "largely unsolved," with explicit sessions on formal models
