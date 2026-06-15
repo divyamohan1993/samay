@@ -1,7 +1,15 @@
 # SAMAY · `pqcsched`
 
+> **Quantum computers will break the encryption (RSA/ECC) protecting almost
+> everything today.** Every organisation must migrate its certificates, keys, and
+> signatures to quantum-safe cryptography — thousands of them, in a dependency-safe
+> order, before regulators' deadlines (2030–2035). Today everyone guesses the order
+> ("migrate highest-risk first"). **SAMAY computes the provably optimal order** —
+> and shows that the guess often misses mandates outright.
+
 **Provably optimal phased scheduling for post-quantum cryptographic migration —
-and an honest test of whether it actually beats greedy.**
+and an honest test of whether it actually beats greedy.** Live demo:
+[pqcsched.dmj.one](https://pqcsched.dmj.one) · once DNS is mapped (Cloud Run URL meanwhile).
 
 समय *(samay)* means *time / schedule*. Post-quantum migration is mandated and on
 a clock. Every vendor today prioritises the same way: discover the crypto, score
