@@ -56,72 +56,112 @@ def _effort(usage: str) -> int:
     return _DEFAULT_COST
 
 
-def india_dpi_instance(
-    path: str | None = None,
+def _infer_kind(a: dict) -> str:
+    if a.get("kind"):
+        return a["kind"]
+    u = (a.get("crypto_usage", "") + " " + a.get("id", "")).lower()
+    if any(k in u for k in ("cert", "ca", "s/mime", "smime")):
+        return "certificate"
+    if any(k in u for k in ("tls", "ipsec", "ike", "protocol", "mtls", "vpn")):
+        return "protocol"
+    if any(k in u for k in ("key", "sign", "wrap", "hsm", "token")):
+        return "key"
+    return "algorithm"
+
+
+def _resolve(path: str | None, *names: str) -> str:
+    if path and os.path.exists(path):
+        return path
+    here = os.path.dirname(os.path.abspath(__file__))
+    for n in names:
+        cand = os.path.join(here, "..", "..", n)
+        if os.path.exists(cand):
+            return cand
+    raise FileNotFoundError(f"estate json not found: {names}")
+
+
+def estate_from_json(
+    path: str,
     *,
-    t_crqc: int = 30,            # CRQC ~2034 in quarter-index from 2026Q3 (aggressive end of GRI range)
+    scenario: str = "estate",
+    t_crqc: int = 30,
     budget_tightness: float = 0.55,
 ) -> Instance:
-    """Build the India-DPI case-study Instance from the public-architecture estate.
+    """Build a schedulable :class:`Instance` from a named-estate JSON.
 
-    t_crqc default 30 (~2034) places the CRQC beyond the 2026-2030 planning
-    horizon, so near-term migration is deadline-driven while long-lived secrets
-    (HSM keys, the PID-wrap pubkey, bank key-wrap) carry full HNDL risk — the
-    realistic interplay this case study is meant to show.
+    The JSON lists crypto *usages* with a coarse business rating (criticality 1-5,
+    shelf-life tier, internet-facing, mandated, earliest, deadline) plus a
+    migration-precedence edge list and co-migration clusters. We map those to the
+    integer model, attach human-readable ``label``/``kind`` for roadmaps, and size
+    the per-period budget so the estate is feasible at the requested tightness.
+    Periods are quarters; ``t_crqc`` beyond the horizon makes near-term migration
+    deadline-driven while long-lived secrets carry full HNDL risk.
     """
-    if path is None:
-        here = os.path.dirname(os.path.abspath(__file__))
-        # prefer the committed benchmark copy; fall back to the research artifact
-        for cand in (
-            os.path.join(here, "..", "..", "benchmark", "india_dpi.json"),
-            os.path.join(here, "..", "..", "research", "dpi-estate.json"),
-        ):
-            if os.path.exists(cand):
-                path = cand
-                break
-    if path is None or not os.path.exists(path):
-        raise FileNotFoundError("india_dpi estate json not found (benchmark/india_dpi.json)")
-
     with open(path) as fh:
         data = json.load(fh)
-
     T = int(data["horizon_T"])
     assets: list[Asset] = []
     for a in data["assets"]:
         if not a.get("quantum_vulnerable", True):
-            continue   # consume only quantum-vulnerable usages as decision assets
+            continue  # only quantum-vulnerable usages are decision assets
         crit = min(100, a["criticality"] * CRIT_SCALE + (EXPOSURE_BUMP if a.get("internet_facing") else 0))
         shelf = SHELF_QUARTERS.get(a.get("shelf_life_tier", "med"), 40)
-        cost = _effort(a.get("crypto_usage", ""))
-        deadline = int(a["deadline"]) if a.get("mandated") and a.get("deadline") is not None else None
+        # explicit migration effort if the estate provides it; else default-by-kind
+        cost = int(a["cost"]) if a.get("cost") is not None else _effort(a.get("crypto_usage", "") + " " + a.get("id", ""))
         earliest = int(a.get("earliest", 0))
+        deadline = int(a["deadline"]) if a.get("mandated") and a.get("deadline") is not None else None
         if deadline is not None:
-            deadline = max(deadline, earliest)  # keep self-consistent
-        assets.append(Asset(id=a["id"], criticality=int(crit), shelf_life=int(shelf),
-                            cost=int(cost), earliest=earliest, deadline=deadline))
-
+            deadline = max(deadline, earliest)
+        assets.append(Asset(
+            id=a["id"], criticality=int(crit), shelf_life=int(shelf), cost=int(cost),
+            earliest=earliest, deadline=deadline,
+            label=a.get("label") or a.get("crypto_usage") or a["id"],
+            kind=_infer_kind(a),
+        ))
     kept = {x.id for x in assets}
     deps = [(j, i) for j, i in data.get("deps_precedence_j_to_i", []) if j in kept and i in kept]
     clusters = [(x, y) for x, y in data.get("co_migration_clusters", []) if x in kept and y in kept]
-
     total = sum(x.cost for x in assets)
     max_cost = max(x.cost for x in assets)
     tight = min(max(budget_tightness, 1e-3), 1.0)
     per = max(math.ceil(total / tight / T), max_cost)
-    budget = [per] * T
-
     return Instance(
-        assets=assets, T=T, budget=budget, deps=deps, clusters=clusters,
-        t_crqc=t_crqc,
+        assets=assets, T=T, budget=[per] * T, deps=deps, clusters=clusters, t_crqc=t_crqc,
         meta={
-            "scenario": "india_dpi",
-            "period_unit": "quarter", "horizon": data.get("period_index_note", ""),
-            "source": "research/cbom-and-dpi.md (public architecture; not internal data)",
-            "stats": {"n_assets": len(assets), "n_deps": len(deps),
-                      "n_clusters": len(clusters),
+            "scenario": scenario, "title": data.get("scenario", scenario),
+            "blurb": data.get("blurb", ""), "period_unit": "quarter",
+            "horizon": data.get("period_index_note", ""),
+            "stats": {"n_assets": len(assets), "n_deps": len(deps), "n_clusters": len(clusters),
                       "n_mandated": sum(1 for x in assets if x.deadline is not None),
                       "total_cost": total, "per_period_budget": per,
                       "realized_tightness": round(total / (T * per), 4)},
-            "effort_model": "default-by-asset-kind (estate carries no migration effort)",
+            "effort_model": "default-by-asset-kind (an estate/CBOM carries no migration effort)",
         },
     )
+
+
+def india_dpi_instance(path: str | None = None, *, t_crqc: int = 30,
+                       budget_tightness: float = 0.55) -> Instance:
+    """India Digital Public Infrastructure case-study estate (public architecture)."""
+    p = _resolve(path, "benchmark/india_dpi.json", "research/dpi-estate.json")
+    return estate_from_json(p, scenario="india_dpi", t_crqc=t_crqc, budget_tightness=budget_tightness)
+
+
+def enterprise_instance(path: str | None = None, *, t_crqc: int = 30,
+                        budget_tightness: float = 0.55) -> Instance:
+    """Stylised mid-size enterprise estate (PKI, edge TLS, identity, HSM secrets)."""
+    p = _resolve(path, "benchmark/enterprise.json")
+    return estate_from_json(p, scenario="enterprise", t_crqc=t_crqc, budget_tightness=budget_tightness)
+
+
+# Registry the API/UI use to offer concrete starting points.
+SAMPLES = {
+    "enterprise": ("Mid-size enterprise", enterprise_instance),
+    "india_dpi": ("India Digital Public Infrastructure", india_dpi_instance),
+}
+
+
+def sample_instance(name: str, **kw) -> Instance:
+    if name not in SAMPLES:
+        raise KeyError(f"unknown sample {name!r}; choose from {list(SAMPLES)}")
+    return SAMPLES[name][1](**kw)

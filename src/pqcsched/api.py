@@ -35,6 +35,11 @@ from .score import score_schedule
 from .solve_cpsat import solve_cpsat
 from .greedy import greedy_schedule, BASELINES
 from .generate import generate, GenParams
+from .scenarios import sample_instance, SAMPLES
+try:  # CBOM ingest is optional at import (heavy parsing deps), but ships here
+    from .cbom import cbom_to_instance
+except Exception:  # noqa: BLE001
+    cbom_to_instance = None
 
 
 # --- hard server-side limits (the DoS floor) -------------------------------
@@ -222,6 +227,158 @@ def solve(req: SolveRequest):
         return out
     finally:
         _solve_sem.release()
+
+
+# ---------------------------------------------------------------------------
+# Enterprise planning: a named estate or an uploaded CBOM -> an actionable,
+# named, quarter-by-quarter migration roadmap (the thing a CISO can act on).
+# ---------------------------------------------------------------------------
+def _period_label(t: int, unit: str, start_year: int = 2026) -> str:
+    if unit == "quarter":
+        return f"{start_year + t // 4} Q{t % 4 + 1}"
+    return str(start_year + t)
+
+
+def _reason(asset: Asset, period: int, n_dependents: int) -> str:
+    if n_dependents > 0:
+        return f"unblocks {n_dependents} dependent" + ("s" if n_dependents != 1 else "")
+    if asset.deadline is not None and period >= asset.deadline - 2:
+        return "meets a regulatory deadline"
+    if asset.shelf_life >= 40 and period <= 6:
+        return "limits harvest-now-decrypt-later exposure"
+    return "scheduled for least total risk"
+
+
+def build_roadmap(inst: Instance, schedule, rm: RiskModel) -> dict:
+    unit = inst.meta.get("period_unit", "year")
+    dep_count: dict[str, int] = {}
+    for j, _i in inst.deps:
+        dep_count[j] = dep_count.get(j, 0) + 1
+    items = []
+    for a in inst.assets:
+        t = schedule.get(a.id)
+        items.append({
+            "id": a.id, "label": a.label or a.id, "kind": a.kind or "asset",
+            "criticality": a.criticality,
+            "period": t, "period_label": (_period_label(t, unit) if t is not None else None),
+            "deadline_label": (_period_label(a.deadline, unit) if a.deadline is not None else None),
+            "on_time": (a.deadline is None or (t is not None and t <= a.deadline)),
+            "reason": (_reason(a, t, dep_count.get(a.id, 0)) if t is not None else "not scheduled"),
+        })
+    items.sort(key=lambda x: (x["period"] if x["period"] is not None else 10 ** 9, -x["criticality"]))
+    timeline: dict[int, list] = {}
+    for it in items:
+        if it["period"] is not None:
+            timeline.setdefault(it["period"], []).append(it)
+    sc = score_schedule(inst, schedule, rm)
+    return {
+        "period_unit": unit,
+        "summary": {
+            "n_assets": len(inst.assets),
+            "n_mandated": sum(1 for a in inst.assets if a.deadline is not None),
+            "all_mandates_met": sc.deadline_violations == 0,
+            "deadline_violations": sc.deadline_violations,
+            "residual_risk": sc.risk, "effort": sc.cost,
+            "first_period": (_period_label(min(timeline), unit) if timeline else None),
+            "last_period": (_period_label(max(timeline), unit) if timeline else None),
+        },
+        "timeline": [{"period": t, "period_label": _period_label(t, unit), "assets": timeline[t]}
+                     for t in sorted(timeline)],
+    }
+
+
+def naive_comparison(inst: Instance, rm: RiskModel, opt_objective, opt_optimal: bool) -> dict:
+    sched = greedy_schedule(inst, "highest_risk", rm, seed=0)
+    sc = score_schedule(inst, sched, rm)
+    missed = [(a.label or a.id) for a in inst.assets
+              if a.deadline is not None and (a.id not in sched or sched[a.id] > a.deadline)]
+    gap = ((sc.risk - opt_objective) / opt_objective) if (opt_optimal and opt_objective) else None
+    return {"approach": "highest-risk-first (the usual approach)", "feasible": sc.feasible,
+            "missed_mandates": missed[:12], "n_missed": len(missed), "residual_risk": sc.risk,
+            "extra_risk_vs_optimal": (round(gap, 4) if gap is not None else None)}
+
+
+class PlanRequest(BaseModel):
+    sample: str | None = None
+    cbom: dict | None = None
+    instance: InstanceIn | None = None
+    capacity: conint(ge=1, le=10_000) | None = None
+    time_limit: confloat(gt=0, le=Limits.MAX_TIME_LIMIT) = 8.0
+
+
+@app.get("/samples")
+def samples():
+    out = []
+    for sid, (title, fn) in SAMPLES.items():
+        try:
+            inst = fn(); s = inst.meta["stats"]
+            out.append({"id": sid, "title": inst.meta.get("title", title),
+                        "blurb": inst.meta.get("blurb", ""), "n_assets": s["n_assets"],
+                        "n_mandated": s["n_mandated"]})
+        except Exception:  # noqa: BLE001
+            continue
+    return {"samples": out}
+
+
+@app.post("/plan")
+def plan(req: PlanRequest):
+    """Plan a migration: build an estate (sample / uploaded CBOM / instance), solve
+    it to proven optimality, and return an actionable roadmap + what the usual
+    'highest-risk-first' approach would do instead."""
+    rm = RiskModel()
+    if req.sample is not None:
+        if req.sample not in SAMPLES:
+            raise HTTPException(422, f"unknown sample; choose {list(SAMPLES)}")
+        inst = sample_instance(req.sample)
+    elif req.cbom is not None:
+        if cbom_to_instance is None:
+            raise HTTPException(503, "CBOM ingest unavailable in this build")
+        comps = req.cbom.get("components", []) if isinstance(req.cbom, dict) else []
+        if len(comps) > Limits.MAX_ASSETS:
+            raise HTTPException(413, f"CBOM too large: {len(comps)} components (cap {Limits.MAX_ASSETS})")
+        try:
+            inst = cbom_to_instance(req.cbom, periods=20, t_crqc=30)
+        except Exception as e:  # noqa: BLE001
+            raise HTTPException(422, f"could not parse this CBOM: {e}")
+        if not inst.assets:
+            raise HTTPException(422, "no quantum-vulnerable cryptographic assets found in this CBOM")
+    elif req.instance is not None:
+        inst = req.instance.to_instance()
+    else:
+        raise HTTPException(422, "provide one of: sample, cbom, instance")
+
+    if len(inst.assets) > Limits.MAX_ASSETS or inst.T > Limits.MAX_T:
+        raise HTTPException(413, "estate too large for the hosted demo")
+
+    if req.capacity is not None:
+        floor = max((a.cost for a in inst.assets), default=1)
+        cap = max(int(req.capacity), floor)
+        inst = Instance(assets=inst.assets, T=inst.T, budget=[cap] * inst.T, deps=inst.deps,
+                        clusters=inst.clusters, t_crqc=inst.t_crqc, meta=inst.meta)
+
+    tl = min(float(req.time_limit), Limits.MAX_TIME_LIMIT)
+    if not _solve_sem.acquire(timeout=15):
+        raise HTTPException(503, "server busy, retry shortly")
+    try:
+        res = solve_cpsat(inst, rm, time_limit=tl, workers=LIMITS.MAX_WORKERS)
+    finally:
+        _solve_sem.release()
+
+    out = {
+        "estate": {"title": inst.meta.get("title", inst.meta.get("scenario", "your estate")),
+                   "blurb": inst.meta.get("blurb", ""), "n_assets": len(inst.assets),
+                   "n_mandated": sum(1 for a in inst.assets if a.deadline is not None),
+                   "capacity_per_period": (inst.budget[0] if inst.budget else None),
+                   "period_unit": inst.meta.get("period_unit", "year")},
+        "status": res.status, "proven_optimal": res.is_optimal,
+    }
+    if res.schedule is None:
+        out["error"] = ("No feasible plan at this capacity — even the optimum cannot meet every "
+                        "mandate. Increase the migration capacity per period.")
+        return out
+    out["roadmap"] = build_roadmap(inst, res.schedule, rm)
+    out["naive"] = naive_comparison(inst, rm, res.objective, res.is_optimal)
+    return out
 
 
 @app.get("/", response_class=HTMLResponse)

@@ -1,0 +1,385 @@
+{
+  "scenario": "Northwind Enterprise",
+  "horizon_T": 20,
+  "period_unit": "quarter",
+  "period_index_note": "0 = 2026Q1 ... 19 = 2030Q4",
+  "blurb": "A stylised mid-size enterprise crypto estate: public edge TLS, an internal PKI hierarchy, code-signing, identity/SSO, HSM-wrapped secrets, and data-at-rest. Dependencies and deadlines follow public PKI practice and CNSA 2.0 / NIST IR 8547 timelines. Synthetic, not a real company.",
+  "assets": [
+    {
+      "id": "root-ca",
+      "label": "Enterprise Root CA (RSA-4096)",
+      "kind": "certificate",
+      "pillar": "PKI",
+      "crypto_usage": "root cert-signing (trust anchor for the whole estate)",
+      "criticality": 5,
+      "shelf_life_tier": "none",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 2,
+      "deadline": 10,
+      "cost": 5
+    },
+    {
+      "id": "issuing-ca",
+      "label": "Issuing CA (intermediate, RSA-2048)",
+      "kind": "certificate",
+      "pillar": "PKI",
+      "crypto_usage": "intermediate cert-signing for all leaf certificates",
+      "criticality": 5,
+      "shelf_life_tier": "none",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 3,
+      "deadline": 11,
+      "cost": 4
+    },
+    {
+      "id": "codesign-ca",
+      "label": "Code-Signing CA",
+      "kind": "certificate",
+      "pillar": "PKI",
+      "crypto_usage": "CA that issues software/firmware signing certs",
+      "criticality": 4,
+      "shelf_life_tier": "none",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 3,
+      "deadline": 7,
+      "cost": 3
+    },
+    {
+      "id": "api-tls",
+      "label": "Public API gateway TLS (api.northwind.example)",
+      "kind": "protocol",
+      "pillar": "Edge",
+      "crypto_usage": "internet-facing TLS endpoint, ECDHE/RSA",
+      "criticality": 5,
+      "shelf_life_tier": "short",
+      "internet_facing": true,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 1,
+      "deadline": 15,
+      "cost": 3
+    },
+    {
+      "id": "web-tls",
+      "label": "Customer portal TLS (www)",
+      "kind": "protocol",
+      "pillar": "Edge",
+      "crypto_usage": "internet-facing TLS endpoint",
+      "criticality": 4,
+      "shelf_life_tier": "short",
+      "internet_facing": true,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 1,
+      "deadline": 15,
+      "cost": 2
+    },
+    {
+      "id": "mobile-tls",
+      "label": "Mobile app API TLS",
+      "kind": "protocol",
+      "pillar": "Edge",
+      "crypto_usage": "internet-facing TLS for mobile clients",
+      "criticality": 4,
+      "shelf_life_tier": "short",
+      "internet_facing": true,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 1,
+      "deadline": 16,
+      "cost": 2
+    },
+    {
+      "id": "cdn-tls",
+      "label": "CDN / edge TLS",
+      "kind": "protocol",
+      "pillar": "Edge",
+      "crypto_usage": "front CDN TLS termination",
+      "criticality": 2,
+      "shelf_life_tier": "short",
+      "internet_facing": true,
+      "mandated": false,
+      "quantum_vulnerable": true,
+      "earliest": 0,
+      "deadline": 18,
+      "cost": 2
+    },
+    {
+      "id": "hsm-master",
+      "label": "HSM master key-wrap (RSA-OAEP)",
+      "kind": "key",
+      "pillar": "Secrets",
+      "crypto_usage": "HSM-held master key wrapping long-term secrets (HNDL marquee)",
+      "criticality": 5,
+      "shelf_life_tier": "long",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 4,
+      "deadline": 7,
+      "cost": 4
+    },
+    {
+      "id": "backup-wrap",
+      "label": "Backup encryption key-wrap",
+      "kind": "key",
+      "pillar": "Secrets",
+      "crypto_usage": "wraps at-rest backup data-encryption keys (HNDL)",
+      "criticality": 5,
+      "shelf_life_tier": "long",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 4,
+      "deadline": 8,
+      "cost": 3
+    },
+    {
+      "id": "db-mtls",
+      "label": "Database / service-mesh mTLS",
+      "kind": "protocol",
+      "pillar": "Internal",
+      "crypto_usage": "internal mutual-TLS between services and datastores",
+      "criticality": 4,
+      "shelf_life_tier": "med",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 2,
+      "deadline": 14,
+      "cost": 3
+    },
+    {
+      "id": "secrets-tls",
+      "label": "Secrets-manager TLS",
+      "kind": "protocol",
+      "pillar": "Internal",
+      "crypto_usage": "TLS to the secrets/vault service",
+      "criticality": 4,
+      "shelf_life_tier": "short",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 2,
+      "deadline": 14,
+      "cost": 2
+    },
+    {
+      "id": "sso-sign",
+      "label": "SSO / SAML assertion signing key",
+      "kind": "key",
+      "pillar": "Identity",
+      "crypto_usage": "signs SAML assertions for workforce SSO",
+      "criticality": 5,
+      "shelf_life_tier": "med",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 3,
+      "deadline": 11,
+      "cost": 3
+    },
+    {
+      "id": "jwt-sign",
+      "label": "API token (JWT/OIDC) signing key",
+      "kind": "key",
+      "pillar": "Identity",
+      "crypto_usage": "signs OIDC/JWT access tokens",
+      "criticality": 4,
+      "shelf_life_tier": "short",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 2,
+      "deadline": 11,
+      "cost": 2
+    },
+    {
+      "id": "vpn-ike",
+      "label": "Remote-access VPN (IKEv2/IPsec)",
+      "kind": "protocol",
+      "pillar": "Network",
+      "crypto_usage": "workforce VPN key exchange",
+      "criticality": 4,
+      "shelf_life_tier": "short",
+      "internet_facing": true,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 2,
+      "deadline": 14,
+      "cost": 3
+    },
+    {
+      "id": "code-sign",
+      "label": "Software code-signing key",
+      "kind": "key",
+      "pillar": "DevOps",
+      "crypto_usage": "signs release artifacts / firmware",
+      "criticality": 4,
+      "shelf_life_tier": "none",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 4,
+      "deadline": 8,
+      "cost": 2
+    },
+    {
+      "id": "doc-sign",
+      "label": "Document e-signature key",
+      "kind": "key",
+      "pillar": "Business",
+      "crypto_usage": "signs contracts / PDFs",
+      "criticality": 3,
+      "shelf_life_tier": "none",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 3,
+      "deadline": 12,
+      "cost": 2
+    },
+    {
+      "id": "email-smime",
+      "label": "Email S/MIME signing",
+      "kind": "certificate",
+      "pillar": "Business",
+      "crypto_usage": "signs/encrypts corporate email",
+      "criticality": 2,
+      "shelf_life_tier": "none",
+      "internet_facing": false,
+      "mandated": false,
+      "quantum_vulnerable": true,
+      "earliest": 2,
+      "deadline": 18,
+      "cost": 2
+    },
+    {
+      "id": "partner-tls",
+      "label": "B2B partner gateway TLS",
+      "kind": "protocol",
+      "pillar": "Edge",
+      "crypto_usage": "TLS to external partner APIs",
+      "criticality": 3,
+      "shelf_life_tier": "med",
+      "internet_facing": true,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 2,
+      "deadline": 15,
+      "cost": 2
+    },
+    {
+      "id": "iot-fw",
+      "label": "IoT/device firmware verification key",
+      "kind": "key",
+      "pillar": "DevOps",
+      "crypto_usage": "verifies signed device firmware",
+      "criticality": 3,
+      "shelf_life_tier": "med",
+      "internet_facing": false,
+      "mandated": true,
+      "quantum_vulnerable": true,
+      "earliest": 5,
+      "deadline": 9,
+      "cost": 2
+    },
+    {
+      "id": "legacy-aes",
+      "label": "Bulk data AES-256-GCM",
+      "kind": "algorithm",
+      "pillar": "Internal",
+      "crypto_usage": "symmetric at-rest encryption (already quantum-resistant)",
+      "criticality": 3,
+      "shelf_life_tier": "long",
+      "internet_facing": false,
+      "mandated": false,
+      "quantum_vulnerable": false,
+      "earliest": 0,
+      "deadline": 19,
+      "cost": 1
+    }
+  ],
+  "deps_precedence_j_to_i": [
+    [
+      "root-ca",
+      "issuing-ca"
+    ],
+    [
+      "root-ca",
+      "codesign-ca"
+    ],
+    [
+      "issuing-ca",
+      "api-tls"
+    ],
+    [
+      "issuing-ca",
+      "web-tls"
+    ],
+    [
+      "issuing-ca",
+      "mobile-tls"
+    ],
+    [
+      "issuing-ca",
+      "db-mtls"
+    ],
+    [
+      "issuing-ca",
+      "secrets-tls"
+    ],
+    [
+      "issuing-ca",
+      "vpn-ike"
+    ],
+    [
+      "issuing-ca",
+      "sso-sign"
+    ],
+    [
+      "issuing-ca",
+      "doc-sign"
+    ],
+    [
+      "issuing-ca",
+      "email-smime"
+    ],
+    [
+      "issuing-ca",
+      "partner-tls"
+    ],
+    [
+      "codesign-ca",
+      "code-sign"
+    ],
+    [
+      "codesign-ca",
+      "iot-fw"
+    ],
+    [
+      "hsm-master",
+      "backup-wrap"
+    ],
+    [
+      "hsm-master",
+      "secrets-tls"
+    ],
+    [
+      "api-tls",
+      "mobile-tls"
+    ]
+  ],
+  "co_migration_clusters": [
+    [
+      "api-tls",
+      "partner-tls"
+    ]
+  ]
+}

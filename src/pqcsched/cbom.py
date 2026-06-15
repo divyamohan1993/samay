@@ -477,6 +477,11 @@ def _resolve_asset(
             )
             deadline = earliest
 
+    # human-readable display metadata for roadmaps (name from the CBOM component)
+    name = estate.by_ref.get(ref, {}).get("name") or ref
+    disp_kind = {"ca": "certificate", "leaf": "certificate", "key": "key",
+                 "protocol": "protocol", "algorithm": "algorithm"}.get(kind, "asset")
+
     return Asset(
         id=ref,
         criticality=int(crit),
@@ -485,6 +490,8 @@ def _resolve_asset(
         perf_penalty=0.0,  # CBOM carries no overhead figure; left at 0.0
         earliest=int(earliest),
         deadline=deadline,
+        label=str(name),
+        kind=disp_kind,
     )
 
 

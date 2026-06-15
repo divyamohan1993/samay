@@ -34,6 +34,8 @@ class Asset:
     perf_penalty: PQC/hybrid overhead (latency/handshake/bandwidth); optional.
     earliest:     earliest feasible period e_i (PQC support availability).
     deadline:     mandated regulatory deadline D_i (None = unmandated).
+    label:        human-readable name for roadmaps/UI (display only; defaults to id).
+    kind:         asset kind for display (certificate | key | protocol | algorithm).
     """
 
     id: str
@@ -43,6 +45,8 @@ class Asset:
     perf_penalty: float = 0.0
     earliest: int = 0
     deadline: int | None = None
+    label: str | None = None
+    kind: str | None = None
 
     def __post_init__(self) -> None:
         # Integrality is load-bearing for solver/scorer parity — enforce it.
