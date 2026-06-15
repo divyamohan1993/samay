@@ -15,6 +15,15 @@ tested* — this is **not** a "greedy suffices" result:
 | random | +142% | 67% |
 | **HNDL-aware greedy** (stronger baseline we added) | **+49%** | 69% |
 
+- **Transferable claim = feasibility; risk-magnitude is distribution-dependent.**
+  The 56%/49% risk gap is driven by HNDL *timing* and is a property of the
+  synthetic distribution (the realistic India-DPI estate, whose secrets mostly
+  don't cross the HNDL threshold, shows only +4.2% on risk). The robust,
+  transferable finding is that greedy *misses mandates* (feasibility). The reported
+  gap is **conservative** — infeasible greedies (which accrue more risk) are
+  excluded. (Independently recomputed + confirmed by an adversarial verifier:
+  every headline number matches the committed CSVs; parity verified at the
+  data-producing layer; verdict "honest, ship".)
 - The gap is **combinatorial, not a naive sort**: even a sophisticated greedy that
   prioritizes *current* per-period HNDL risk is still ~49% worse than optimal.
 - **Greedy frequently infeasible**: feasibility collapses from 97% (low deadline

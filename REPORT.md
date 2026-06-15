@@ -4,10 +4,12 @@
 
 > **Status:** all results sections are populated from the reproducible study in
 > `runs/`. The generator distributions and grid were **pre-registered** in
-> `PROGRESS.md` *before* the study was run. The main grid covers 23/36 cells (515
-> proven-optimal instances); the hardest dependency-dense × tight-budget cells are
-> partially covered (finite overnight compute on a shared box — see §13). Every
-> number here is regenerable; seeds are fixed and solver versions logged.
+> `PROGRESS.md` *before* the study was run. The size-45 main grid covers 23/36
+> cells (515 proven-optimal instances) at dependency densities {0.1, 0.4}; the
+> dense **dep 0.7** tier is beyond CP-SAT's exact frontier at size 45 and is
+> studied separately at size 30 (§9.1), not in the main grid (finite overnight
+> compute on a shared box — see §13). Every number here is regenerable; seeds are
+> fixed and solver versions logged.
 
 ---
 
@@ -30,18 +32,21 @@ optimal scheduling actually beat greedy risk-ranking, and when?** We contribute
 CBC free fallbacks; Gurobi optional), (iii) the first reusable synthetic
 benchmark for PQC migration scheduling, (iv) a matheuristic for estates too large
 to solve exactly, and (v) a reproducible empirical study across a difficulty grid.
-**Headline (RQ2), over 515 instances proven optimal:** optimal scheduling beats
-the vendor default (migrate-highest-risk-first) by a **median 56%** in residual
-risk, beats even a sophisticated **HNDL-aware** greedy by **49%**, and greedy
-heuristics **miss a mandated deadline 25–42% of the time** — so this is *not* a
-"greedy suffices" result; the precedence-and-budget-constrained timing problem is
-genuinely combinatorial. In a stylised **India Digital Public Infrastructure** case
-study (Aadhaar/UPI/DigiLocker/eSign/CCA PKI, 26 vulnerable assets), the optimal
-schedule lowers residual risk versus the best greedy and, unlike three of five
-greedy heuristics, **meets every regulatory deadline** — the greedy heuristics
-paint themselves into an infeasible corner. The contribution is honest: gaps are
-stated relative to the model and pre-registered distributions, and we map the
-(few) conditions that narrow the gap rather than the ones that widen it.
+**Headline (RQ2), over 515 instances proven optimal.** The robust, transferable
+finding is about **feasibility**: greedy risk-ranking heuristics **miss a mandated
+regulatory deadline 25–42% of the time** (and in the realistic India-DPI case, 3
+of 5 go infeasible), while the optimum satisfies every mandate whenever the
+instance admits one. On *risk*, optimal scheduling beats the vendor default
+(migrate-highest-risk-first) by a **median 56%**, and even a sophisticated
+**HNDL-aware** greedy by **49%**, across the synthetic grid — but that *magnitude*
+is driven by harvest-now-decrypt-later **timing** and is therefore distribution-
+dependent: the realistic India-DPI estate, whose secrets mostly do not cross the
+HNDL threshold within the horizon, shows only **+4.2%** on risk. Either way this is
+*not* a "greedy suffices" result; the precedence-and-budget-constrained timing
+problem is genuinely combinatorial. The reported gap is **conservative** — greedy
+schedules that go infeasible (accruing yet more risk from unmigrated mandated
+assets) are *excluded* from it, so including them would only raise it. Gaps are
+stated relative to the model and the pre-registered distributions.
 
 ---
 
@@ -231,10 +236,12 @@ version and parameters are logged with every result.
 
 ## 9. Results — RQ2: does optimal beat greedy, and when?
 
-Across **515 instances proven OPTIMAL** (23 of 36 grid cells; the hardest
-dependency-dense × tight-budget cells are partially covered — see §13 note), the
-answer is clear and robust: **optimal scheduling beats greedy substantially, in
-every regime tested.** Per-instance paired gaps `(R_greedy − R_opt)/R_opt`:
+Across **515 instances proven OPTIMAL** (23 of 36 grid cells — the size-45 main
+grid covers dependency densities {0.1, 0.4}; the dense **dep 0.7** tier sits beyond
+CP-SAT's exact frontier at size 45 and is studied separately at size 30 in §9.1,
+not in the main grid), the answer is clear and robust: **optimal scheduling beats
+greedy substantially, in every regime tested.** Per-instance paired gaps
+`(R_greedy − R_opt)/R_opt`:
 
 | baseline | median gap | mean gap | greedy feasible rate |
 |---|---:|---:|---:|
@@ -287,10 +294,12 @@ budget migrating assets whose risk has not yet activated, while the optimum
 reserves it for assets already accruing full HNDL risk.)
 
 **9.3 Greedy frequently produces an infeasible roadmap.** Feasibility (meeting all
-mandated deadlines) collapses under deadline pressure: at deadline-pressure 0.1
-the best greedy is feasible 97% of the time, but at pressure 0.8 only **25%** —
-three-quarters of greedy roadmaps miss a regulatory mandate. The optimum is
-feasible by construction whenever the instance is feasible at all. This mirrors
+mandated deadlines) collapses under deadline pressure: for the **vendor-default
+greedy (highest-risk-first)**, feasibility falls from 97% at deadline-pressure 0.1
+to just **25%** at pressure 0.8 — three-quarters of its roadmaps miss a regulatory
+mandate (even taking the best-of-five greedies per instance, feasibility is only
+~45% at pressure 0.8). The optimum is feasible by construction whenever the
+instance is feasible at all. This mirrors
 the India-DPI case study (§12), where 3 of 5 greedies miss a mandate.
 
 **Honest reading.** This is a *positive* result for optimization — the brief
