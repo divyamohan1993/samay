@@ -91,6 +91,7 @@ from typing import Any
 import orjson
 
 from .model import Asset, Instance
+from .regulatory import default_deadline_period as _ddp
 
 log = logging.getLogger("pqcsched.cbom")
 
@@ -222,23 +223,21 @@ class CbomPolicy:
     # earliest-feasible delay (years) for signature/CA assets (calibration §2.2)
     earliest_signature_delay: int = 2
 
-    # mandated-deadline profile (period offsets; None = unmandated). Modeling
-    # choice shaped like a CNSA-2.0 phase-out, ordered by HNDL urgency AND by
-    # precedence depth: the *foundational, long-shelf-life* trust anchors (CAs,
-    # long-lived keys) carry the tightest mandates, and the ephemeral protocol
-    # surface — least HNDL-exposed and the sink of the dependency graph — the
-    # loosest. This is deliberately the inverse of "crown-jewel-soonest": a
-    # protocol re-key is cheap and short-secrecy, whereas a root CA protects
-    # decades of trust and sits upstream of everything (calibration §2.3, §3.3).
-    # Ordering deadlines this way also keeps them precedence-consistent
-    # (prerequisite deadline <= dependent deadline), so :func:`_reconcile_deadlines`
-    # does not have to collapse the graph to make it feasible.
-    deadline_ca: int | None = 8
-    deadline_key: int | None = 9
-    deadline_leaf: int | None = 12
-    deadline_algorithm: int | None = 10
-    deadline_protocol: int | None = 15
-    deadline_default: int | None = None
+    # mandated-deadline profile (period offsets from 2026; None = unmandated).
+    # These DEFAULTS are sourced from the dated, single-source-of-truth regulatory
+    # profile (pqcsched.regulatory / data/regulatory.json) — real CNSA 2.0 / NIST
+    # IR 8547 milestones, not arbitrary modelling — so an upload that lacks
+    # deadlines is scheduled against the *actual* mandates (and updating the
+    # mandate dates is one verified edit there, never a hunt through code). The
+    # `_reconcile_deadlines` pass keeps them precedence-consistent; override any of
+    # them per your jurisdiction. The profile's `as_of` date is surfaced on every
+    # plan so a stale default is visible, never silently wrong.
+    deadline_ca: int | None = _ddp("ca")             # PKI / trust anchors (~2029)
+    deadline_key: int | None = _ddp("key")           # keys (~2030)
+    deadline_leaf: int | None = _ddp("leaf")         # leaf certs / TLS endpoints (~2030)
+    deadline_algorithm: int | None = _ddp("algorithm")  # primitives — NIST disallow backstop (2035)
+    deadline_protocol: int | None = _ddp("protocol")    # protocols / networking (~2030)
+    deadline_default: int | None = _ddp("default")      # backstop: NIST disallow 2035
 
     # per-period budget sizing
     budget_tightness: float = 1.0   # budget_t = ceil(tightness * max_asset_cost)

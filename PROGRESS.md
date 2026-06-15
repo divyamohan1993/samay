@@ -81,6 +81,45 @@ each phase.
 
 ---
 
+## 2026-06-15 — Regulatory staleness mitigation (self-identifying, human-verified)
+
+**Problem (user-raised, correct).** The mandate deadlines were *current* but
+hardcoded; when law changes the tool would keep serving old dates with confidence
+and could tell an org it is compliant when it is about to miss a real deadline.
+Also found a live safety bug: the CBOM default-deadline policy hardcoded offsets
+that did **not** match real mandates (e.g. `deadline_ca` ≈ 2034 vs CNSA signing
+2027) — every real upload lacking explicit deadlines got wrong compliance dates.
+
+**Decision: flag-don't-guess, single dated source of truth.** No fully-automatic
+self-update — there is no authoritative machine-readable feed of PQC deadlines, so
+auto-scraping would inject wrong dates with *false confidence* (the exact failure
+mode to avoid). Instead:
+
+- **`src/pqcsched/data/regulatory.json`** — one dated (`as_of` / `review_due`),
+  sourced (URL per mandate), overridable profile; `default_deadline_policy.by_asset_class`
+  maps a coarse asset class → a real mandated year. **`regulatory.py`** loads it and
+  computes staleness at runtime (`is_stale` / `status` / `default_deadline_period`).
+- **CBOM defaults now read the profile** (`cbom.py` `CbomPolicy` → `_ddp(...)`):
+  ca→2029, key/leaf/protocol→2030, algorithm/default→2035 (NIST disallow backstop).
+  Signing (CNSA 2027) stays documented + reachable but is **not** force-applied to
+  coarse uploads (a coarse CBOM can't prove an asset is code-signing; false 2027
+  urgency would make plans infeasible-by-construction). Explicit per-asset deadlines
+  on the CBOM always win over defaults.
+- **Age is shown on every suggestion.** `GET /regulatory` (full profile + staleness);
+  every `/plan` response carries a `regulatory` block; the UI prints a "compliance
+  basis · data as of DATE · verify" banner under each roadmap and flips it to a
+  visible **stale warning** past `review_due`. Landscape cards now carry real source
+  links + a live `as_of` stamp.
+- **The tool flags itself.** `regulatory-watchdog.yml` (monthly cron) opens a single
+  tracking issue once `review_due` passes; **`UPDATING_REGULATORY.md`** documents the
+  human-verified refresh procedure.
+
+**Tested.** New `tests/test_regulatory.py` (loader integrity, staleness flip,
+profile-sourced CBOM defaults regression, `/regulatory` + `/plan` staleness block).
+Full suite green.
+
+---
+
 ## 2026-06-15 — Phase 0/1: environment, core model, exact solver
 
 **Environment (verified):**

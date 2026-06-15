@@ -36,6 +36,7 @@ from .solve_cpsat import solve_cpsat
 from .greedy import greedy_schedule, BASELINES
 from .generate import generate, GenParams
 from .scenarios import sample_instance, SAMPLES
+from . import regulatory
 try:  # CBOM ingest is optional at import (heavy parsing deps), but ships here
     from .cbom import cbom_to_instance
 except Exception:  # noqa: BLE001
@@ -306,6 +307,14 @@ class PlanRequest(BaseModel):
     time_limit: confloat(gt=0, le=Limits.MAX_TIME_LIMIT) = 8.0
 
 
+@app.get("/regulatory")
+def regulatory_status():
+    """The dated, sourced regulatory profile driving default deadlines, plus its
+    runtime staleness. Lets any client verify *which* mandates and dates a plan was
+    computed against, and whether that data is past its review-due date."""
+    return regulatory.status()
+
+
 @app.get("/samples")
 def samples():
     out = []
@@ -371,6 +380,14 @@ def plan(req: PlanRequest):
                    "capacity_per_period": (inst.budget[0] if inst.budget else None),
                    "period_unit": inst.meta.get("period_unit", "year")},
         "status": res.status, "proven_optimal": res.is_optimal,
+    }
+    # Stamp every plan with the age + source of the regulatory data it used, so a
+    # stale profile is *visible on the suggestion itself*, never silently trusted.
+    _reg = regulatory.status()
+    out["regulatory"] = {
+        "as_of": _reg["as_of"], "review_due": _reg["review_due"],
+        "days_old": _reg["days_old"], "stale": _reg["stale"],
+        "disclaimer": _reg["disclaimer"], "profile": _reg["default_policy_profile"],
     }
     if res.schedule is None:
         out["error"] = ("No feasible plan at this capacity — even the optimum cannot meet every "

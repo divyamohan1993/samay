@@ -119,6 +119,17 @@
   .metric .n{font-size:32px;font-weight:800;color:var(--brand);line-height:1}
   .metric .l{color:var(--ink2);font-size:14px;margin-top:8px}
 
+  .regbasis{margin:14px 0 0;padding:11px 14px;border:1px solid var(--line);border-left:3px solid var(--brand);
+    border-radius:10px;background:var(--surface);font-size:13px;color:var(--ink2);line-height:1.5}
+  .regbasis a{color:var(--brand);font-weight:600}
+  .regbasis .tag{display:inline-block;font-weight:700;color:var(--brand)}
+  .regbasis.stale{border-color:var(--bad);border-left-color:var(--bad);background:var(--bad-soft)}
+  .regbasis.stale .warn{display:block;font-weight:700;color:var(--bad);margin-bottom:4px}
+  .reg-asof{font-size:13px;color:var(--mut);margin:6px 0 0}
+  .reg-asof.stale{color:var(--bad);font-weight:600}
+  .card .src{display:inline-block;margin-top:8px;font-size:12.5px;font-weight:600;color:var(--brand)}
+  .card .src + .src{margin-left:14px}
+
   footer{padding:42px 0;background:var(--ink);color:#aebbd0}
   footer .wrap{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center}
   footer a{color:#cdd8ea}
@@ -175,22 +186,27 @@
   <h2>The deadlines are set — and closer than most plans assume.</h2>
   <p class="lede">Quantum-safe migration is now mandated across major jurisdictions, with the first
     compliance dates already in force. The roadmaps SAMAY produces track these mandates.</p>
+  <p class="reg-asof" id="regasof">Regulatory data is human-curated with cited sources. Always verify against your current obligations before relying on these dates.</p>
   <div class="grid g3" style="margin-top:18px">
     <div class="card">
       <h3>United States — CNSA 2.0 &amp; NIST</h3>
       <p>Software/firmware signing exclusive by <b>2027</b>; networking by <b>2030</b>; operating
         systems, applications &amp; cloud by <b>2033</b>. NIST IR 8547 deprecates RSA-2048 / ECC-P256
         by <b>2030</b> and disallows them by <b>2035</b>.</p>
+      <a class="src" href="https://media.defense.gov/2022/Sep/07/2003071834/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF" target="_blank" rel="noopener">CNSA 2.0 ↗</a>
+      <a class="src" href="https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf" target="_blank" rel="noopener">NIST IR 8547 ↗</a>
     </div>
     <div class="card">
       <h3>European Union</h3>
       <p>A coordinated EU mandate sets a hard <b>2030</b> deadline for <b>critical infrastructure</b>
         (including finance) — five years ahead of the US. Member states begin transition by end-2026.</p>
+      <a class="src" href="https://digital-strategy.ec.europa.eu/en/library/recommendation-coordinated-implementation-roadmap-transition-post-quantum-cryptography" target="_blank" rel="noopener">EU roadmap ↗</a>
     </div>
     <div class="card">
       <h3>India — National Quantum Mission</h3>
       <p>A national quantum-safe roadmap: critical sectors (defence, telecom, power, government) begin
         implementation from <b>2027</b>, with <b>mandatory cryptographic inventories</b>.</p>
+      <a class="src" href="https://dst.gov.in/national-quantum-mission" target="_blank" rel="noopener">National Quantum Mission ↗</a>
     </div>
   </div>
   <p class="lede" style="margin-top:22px">And the threat is accelerating: only <b>~5%</b> of
@@ -240,6 +256,8 @@
       <div class="badge" id="sbadge">…</div>
       <div class="txt" id="stext">Loading a sample roadmap…</div>
     </div>
+
+    <div class="regbasis" id="regbasis" aria-live="polite" hidden></div>
 
     <div class="toolbar">
       <div class="legend">
@@ -328,7 +346,23 @@ async function replan(reset){
   finally{ document.querySelector("#plan").classList.remove("busy"); }
 }
 
+function regBasis(reg){
+  const el=$("regbasis"); if(!el) return;
+  if(!reg){ el.hidden=true; return; }
+  el.hidden=false;
+  const verify=`These deadlines are a planning <b>starting point</b>, not legal advice — <a href="#landscape">verify against your current obligations</a> and override the dates where you have authoritative ones.`;
+  if(reg.stale){
+    el.className="regbasis stale";
+    el.innerHTML=`<span class="warn">⚠ Regulatory data may be out of date</span>`+
+      `Computed against <b>${reg.profile||"the configured profile"}</b>, as of <b>${reg.as_of}</b> — now past its ${reg.review_due} review date (${reg.days_old} days old). Re-verify the mandates before relying on these dates. ${verify}`;
+  }else{
+    el.className="regbasis";
+    el.innerHTML=`<span class="tag">Compliance basis:</span> <b>${reg.profile||"configured profile"}</b> · regulatory data as of <b>${reg.as_of}</b> (next review ${reg.review_due}). ${verify}`;
+  }
+}
+
 function render(r,reset){
+  try{ regBasis(r.regulatory); }catch(e){ const el=$("regbasis"); if(el) el.hidden=true; }
   if(r.error || !r.roadmap){ summary("warn","!", r.error||("Couldn't plan this estate ("+(r.status||"error")+").")); $("timeline").innerHTML=""; LAST=null; return; }
   LAST=r; const rm=r.roadmap, s=rm.summary, n=r.naive, est=r.estate;
   if(reset && est && est.capacity_per_period){ const cap=est.capacity_per_period, sl=$("capacity");
@@ -365,6 +399,14 @@ function downloadCSV(){
 }
 
 fetch("/health").then(r=>r.json()).then(j=>$("ver").textContent=" · v"+j.version).catch(()=>{});
+fetch("/regulatory").then(r=>r.json()).then(j=>{
+  const el=$("regasof"); if(!el) return;
+  el.className="reg-asof"+(j.stale?" stale":"");
+  el.innerHTML=(j.stale?"⚠ ":"")+`Mandate data as of <b>${j.as_of}</b>`+
+    (j.stale?` — past its ${j.review_due} review date; re-verify before relying on it.`
+            :` · next review ${j.review_due}.`)+
+    ` Human-curated with cited sources (per card). Always verify against your current obligations.`;
+}).catch(()=>{});
 replan(true);
 </script>
 </body>

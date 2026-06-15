@@ -1,0 +1,70 @@
+{
+  "as_of": "2026-06-15",
+  "review_due": "2026-12-15",
+  "maintainer": "dmj.one",
+  "disclaimer": "Regulatory deadlines change. This profile is human-curated with cited sources and is a STARTING POINT for planning, not legal advice. Validate against your current obligations before relying on it, and override the deadlines with your own where you have authoritative dates.",
+  "update_process": "See UPDATING_REGULATORY.md. Re-verify each source, edit this file, bump `as_of` and `review_due`, open a PR; CI deploys.",
+  "mandates": [
+    {
+      "id": "cnsa_2_0",
+      "authority": "US NSA — CNSA 2.0 (National Security Systems)",
+      "milestones": {
+        "Software/firmware signing — exclusive": 2027,
+        "Networking equipment (VPNs, routers)": 2030,
+        "Operating systems, applications & cloud": 2033,
+        "All NSS quantum-resistant": 2035
+      },
+      "source": "https://media.defense.gov/2022/Sep/07/2003071834/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF"
+    },
+    {
+      "id": "nist_ir_8547",
+      "authority": "US NIST — IR 8547 (Transition to PQC Standards)",
+      "milestones": {
+        "RSA-2048 / ECC-P256 deprecated": 2030,
+        "RSA / ECC disallowed": 2035
+      },
+      "source": "https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf"
+    },
+    {
+      "id": "eu_pqc",
+      "authority": "European Union — coordinated PQC roadmap",
+      "milestones": {
+        "Member states begin transition": 2026,
+        "Critical infrastructure (incl. finance) quantum-safe": 2030
+      },
+      "source": "https://digital-strategy.ec.europa.eu/en/library/recommendation-coordinated-implementation-roadmap-transition-post-quantum-cryptography"
+    },
+    {
+      "id": "india_nqm",
+      "authority": "India — National Quantum Mission",
+      "milestones": {
+        "Critical sectors begin implementation + mandatory crypto inventories": 2027
+      },
+      "source": "https://dst.gov.in/national-quantum-mission"
+    }
+  ],
+  "standards": {
+    "final": ["FIPS 203 (ML-KEM)", "FIPS 204 (ML-DSA)", "FIPS 205 (SLH-DSA)"],
+    "added_2025": "HQC selected as the fifth (non-lattice) algorithm; draft standard 2026",
+    "source": "https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption"
+  },
+  "threat_context": {
+    "rsa2048_qubit_estimate": "fell from ~20M to under 1M qubits (2025 research)",
+    "enterprise_pqc_deployed": "~5% (2025)",
+    "note": "Harvest-now-decrypt-later means data captured today is at risk the day a CRQC arrives."
+  },
+  "default_deadline_policy": {
+    "profile": "US CNSA 2.0 + NIST IR 8547 (conservative backstop)",
+    "base_year": 2026,
+    "note": "Default deadlines applied ONLY when a CBOM carries no deadline of its own. A coarse asset class is mapped to a mandated calendar year. Override per your jurisdiction and obligations.",
+    "by_asset_class": {
+      "signing_key": 2027,
+      "ca": 2029,
+      "protocol": 2030,
+      "leaf": 2030,
+      "key": 2030,
+      "algorithm": 2035,
+      "default": 2035
+    }
+  }
+}

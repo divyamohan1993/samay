@@ -1,0 +1,77 @@
+name: regulatory-watchdog
+
+# Self-identify staleness: the regulatory profile carries a `review_due` date.
+# When that date passes, this job opens (once) a tracking issue so a human
+# re-verifies the mandates against current law and bumps the profile. This is the
+# deliberate mitigation for "the data silently goes stale and the tool starts
+# giving wrong, penalizing advice": the tool flags its own data as due for review
+# instead of trusting it forever. It NEVER edits dates itself (no authoritative
+# machine-readable feed exists; auto-scraping would inject wrong dates with false
+# confidence) — a human verifies, per UPDATING_REGULATORY.md.
+
+on:
+  schedule:
+    - cron: "0 9 1 * *"   # 09:00 UTC, 1st of each month
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check-review-due:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Evaluate staleness
+        id: check
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import datetime, json, os
+          p = json.load(open("src/pqcsched/data/regulatory.json", encoding="utf-8"))
+          today = datetime.date.today()
+          review_due = datetime.date.fromisoformat(p["review_due"])
+          stale = today > review_due
+          print(f"stale={'true' if stale else 'false'}")
+          print(f"as_of={p['as_of']}")
+          print(f"review_due={p['review_due']}")
+          print(f"days_over={(today - review_due).days if stale else 0}")
+          PY
+
+      - name: Open review issue if due
+        if: steps.check.outputs.stale == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          AS_OF: ${{ steps.check.outputs.as_of }}
+          REVIEW_DUE: ${{ steps.check.outputs.review_due }}
+          DAYS_OVER: ${{ steps.check.outputs.days_over }}
+        run: |
+          set -euo pipefail
+          gh label create regulatory-review --color B60205 \
+            --description "PQC regulatory profile needs human re-verification" --force
+          existing="$(gh issue list --label regulatory-review --state open --json number --jq 'length')"
+          if [ "$existing" != "0" ]; then
+            echo "An open regulatory-review issue already exists; not opening a duplicate."
+            exit 0
+          fi
+          gh issue create \
+            --label regulatory-review \
+            --title "Regulatory profile review due — re-verify PQC mandates ($REVIEW_DUE)" \
+            --body "$(cat <<EOF
+          The regulatory profile in \`src/pqcsched/data/regulatory.json\` is **past its review-due date**.
+
+          - **as_of:** $AS_OF
+          - **review_due:** $REVIEW_DUE (now $DAYS_OVER days over)
+
+          Serving stale mandate dates with confidence is a safety risk: plans could miss real deadlines or assert wrong ones. Please re-verify each mandate against current law and refresh the profile.
+
+          **What to do** (see \`UPDATING_REGULATORY.md\` for the full checklist):
+          1. Re-verify every \`mandates[].source\` (CNSA 2.0, NIST IR 8547, EU roadmap, India NQM) and any new mandate in your jurisdiction.
+          2. Update \`milestones\`, \`default_deadline_policy.by_asset_class\`, \`standards\`, and \`threat_context\` as needed.
+          3. Bump \`as_of\` to today and \`review_due\` ~6 months out.
+          4. Open a PR. CI runs the suite and deploys on merge; the live banner then shows the new date.
+
+          Close this issue once the profile is refreshed.
+          EOF
+          )"
