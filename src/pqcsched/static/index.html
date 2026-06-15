@@ -198,36 +198,42 @@ const KIND={certificate:"var(--cert)",key:"var(--key)",protocol:"var(--proto)",a
 let SOURCE={sample:"enterprise"};      // {sample} or {cbom:<obj>}
 let LAST=null;                          // last roadmap for CSV
 
-$("capacity").addEventListener("input",()=>{$("capv").textContent=$("capacity").value; clearTimeout(window._t); window._t=setTimeout(replan,250);});
+$("capacity").addEventListener("input",()=>{$("capv").textContent=$("capacity").value; clearTimeout(window._t); window._t=setTimeout(()=>replan(false),250);});
 
 function pickSample(id){
   SOURCE={sample:id};
   for(const s of ["enterprise","india_dpi","upload"]) $("src-"+s).setAttribute("aria-pressed", String(s===id));
-  replan();
+  replan(true);
 }
 $("cbom").addEventListener("change",async ev=>{
   const f=ev.target.files[0]; if(!f) return;
   try{ const obj=JSON.parse(await f.text()); SOURCE={cbom:obj};
     for(const s of ["enterprise","india_dpi","upload"]) $("src-"+s).setAttribute("aria-pressed", String(s==="upload"));
-    replan();
+    replan(true);
   }catch(e){ verdict("miss","❌ That file isn't valid JSON. Export a CycloneDX <b>CBOM</b> (.json) from your scanner and try again."); }
 });
 
 function verdict(cls,html){ const v=$("verdict"); v.className="verdict "+cls; v.innerHTML=html; }
 
-async function replan(){
+async function replan(reset){
   $("plan").classList.add("busy");
-  const body=Object.assign({capacity:+$("capacity").value, time_limit:8}, SOURCE);
+  const body=Object.assign({time_limit:8}, SOURCE);
+  if(!reset) body.capacity=+$("capacity").value;   // reset => use the estate's natural (feasible) capacity
   try{
     const r=await (await fetch("/plan",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)})).json();
-    render(r);
+    render(r, reset);
   }catch(e){ verdict("miss","Something went wrong: "+e); }
   finally{ $("plan").classList.remove("busy"); }
 }
 
-function render(r){
+function render(r, reset){
   if(r.error || !r.roadmap){ verdict("miss","⚠ "+(r.error||("Couldn't plan this estate ("+(r.status||"error")+").")) ); $("timeline").innerHTML=""; LAST=null; return; }
   LAST=r; const rm=r.roadmap, s=rm.summary, n=r.naive, est=r.estate;
+  if(reset && est && est.capacity_per_period){       // land each estate at its natural feasible capacity
+    const cap=est.capacity_per_period, sl=$("capacity");
+    if(cap>+sl.max) sl.max=cap+5; if(cap<+sl.min) sl.min=Math.max(1,cap-1);
+    sl.value=cap; $("capv").textContent=cap;
+  }
   // verdict
   let html=`<div class="vrow"><span class="em">✅</span><div><b>${est.title}</b> — ${est.n_assets} crypto assets, ${est.n_mandated} under a regulatory mandate.
     SAMAY's <b>provably optimal</b> plan migrates everything by <b>${s.last_period}</b> and <b>meets all ${s.n_mandated} mandates</b>${r.proven_optimal?"":" (best found in the time limit)"}.</div></div>`;
@@ -265,7 +271,7 @@ function downloadCSV(){
 }
 
 fetch("/health").then(r=>r.json()).then(j=>$("ver").textContent=" · v"+j.version).catch(()=>{});
-replan();   // land on the enterprise sample roadmap immediately
+replan(true);   // land on the enterprise sample roadmap at its natural capacity
 </script>
 </body>
 </html>
